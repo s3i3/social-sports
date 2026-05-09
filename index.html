@@ -250,6 +250,11 @@
       <div class="dd-venues-wrap">
         <div style="font-size:15px;font-weight:700;padding:16px 20px 8px">Spor Tesisleri</div>
         <div id="dd-venues-list"></div>
+        <div style="padding:4px 20px 20px">
+          <button class="btn btn-outline" style="font-size:13px" onclick="openFeedbackModal('venue')">
+            📍 Bu İlçede Yeni / Eksik Tesis Var? Bildir
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -409,6 +414,7 @@
           <button class="btn btn-outline" style="margin:8px 16px 12px;font-size:13px;padding:9px 16px;width:auto" onclick="showToast('🔍 '+(LANG.current===\'tr\'?\'Arkadaş arama yakında!\':\'Friend search coming soon!\'))">+ Arkadaş Ekle</button>
         </div>
         <button class="btn btn-outline" style="margin-top:16px" onclick="showToast('✏️ Profil düzenleme yakında!')">✏️ Profili Düzenle</button>
+        <button class="btn btn-ghost" style="margin-top:8px;color:var(--text-secondary);font-size:13px" onclick="openFeedbackModal('feature')">💡 Geliştirme Önerisi Gönder</button>
       </div>
     </div>
     <nav class="bottom-nav">
@@ -443,6 +449,9 @@
 
   <!-- ══════ PROPOSE MODAL ══════ -->
   <div id="propose-modal"></div>
+
+  <!-- ══════ FEEDBACK MODAL ══════ -->
+  <div id="feedback-modal" style="display:none;position:fixed;inset:0;z-index:9000;align-items:flex-end;justify-content:center"></div>
 
 </div>
 

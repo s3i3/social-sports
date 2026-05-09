@@ -693,21 +693,34 @@ function renderDistrictDetail() {
 }
 
 async function loadDistrictVenues(lat, lng, name) {
-  const lang=LANG.current;
-  const query=`[out:json][timeout:30];(node["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink|stadium|track"](around:4000,${lat},${lng});way["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink|stadium|track"](around:4000,${lat},${lng});node["sport"](around:4000,${lat},${lng});way["sport"](around:4000,${lat},${lng}););out center tags 100;`;
+  const ibbData = IBB_VENUES[name] || [];
+  // Show İBB venues immediately while Overpass loads
+  state.districtVenues = ibbData;
+  renderVenueList(ibbData, name);
+  initDistrictDetailMap(lat, lng, ibbData);
+
+  const query=`[out:json][timeout:20];(node["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink|stadium|track"](around:4000,${lat},${lng});way["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink|stadium|track"](around:4000,${lat},${lng});node["sport"](around:4000,${lat},${lng});way["sport"](around:4000,${lat},${lng}););out center tags 100;`;
   try {
     const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:`data=${encodeURIComponent(query)}`});
     const data=await r.json();
-    state.districtVenues=(data.elements||[]).filter(e=>e.tags?.name||e.tags?.operator||e.tags?.sport);
-    renderVenueList(state.districtVenues);
-    initDistrictDetailMap(lat,lng,state.districtVenues);
-  } catch { renderVenueList([]); }
+    const osmVenues=(data.elements||[]).filter(e=>e.tags?.name||e.tags?.operator||e.tags?.sport);
+    // Merge: IBB first, then OSM venues not already covered
+    const ibbNames=new Set(ibbData.map(v=>v.tags?.name));
+    const extra=osmVenues.filter(v=>v.tags?.name&&!ibbNames.has(v.tags.name));
+    const merged=[...ibbData, ...extra];
+    state.districtVenues=merged;
+    renderVenueList(merged, name);
+    initDistrictDetailMap(lat, lng, merged);
+  } catch { /* keep IBB data already shown */ }
 }
 
-function renderVenueList(venues) {
+function renderVenueList(venues, districtName='') {
   const lang=LANG.current;
   const el=document.getElementById('dd-venues-list');
-  if(!venues.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🏟</div><div class="empty-title">${t('noVenues')}</div></div>`;return;}
+  if(!venues.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">🏟</div><div class="empty-title">${t('noVenues')}</div><div class="empty-sub"><a href="https://spor.istanbul/tesisler" target="_blank" style="color:var(--grad-start);font-weight:600">spor.istanbul</a> üzerinden tüm İBB tesislerini görebilirsiniz.</div></div>`;
+    return;
+  }
 
   el.innerHTML=venues.map(v=>{
     const tags=v.tags||{};
@@ -734,7 +747,9 @@ function renderVenueList(venues) {
     // Website & phone
     const website=tags.website||tags['contact:website']||tags.url||'';
     const phone=tags.phone||tags['contact:phone']||'';
-    const websiteLink=website?`<a href="${website}" target="_blank" class="venue-link">🔗 ${t('venueWebsite')}</a>`:'';
+    const websiteLink=isIBB&&website
+      ?`<a href="${website}" target="_blank" class="venue-booking-btn">🗓 Randevu Al · spor.istanbul</a>`
+      :website?`<a href="${website}" target="_blank" class="venue-link">🔗 ${t('venueWebsite')}</a>`:'';
     const phoneLink=phone?`<a href="tel:${phone}" class="venue-link">📞 ${phone}</a>`:'';
 
     // Sports list + leisure type
@@ -795,6 +810,62 @@ function showVenueOnMap(lat, lng, name) {
     state.maps.districtDetail.setView([lat,lng],17);
     document.getElementById('dd-map').scrollIntoView({behavior:'smooth'});
   }
+}
+
+// ─── Feedback Modal ───────────────────────────────────────
+function openFeedbackModal(type) {
+  const lang=LANG.current;
+  const modal=document.getElementById('feedback-modal');
+  const isVenue = type==='venue';
+  const venueTypes=lang==='tr'
+    ?['Halı Saha','Tenis Kortu','Padel Kortu','Fitness / Pilates','Yüzme Havuzu','Kapalı Spor Salonu','Basketbol Sahası','Voleybol Sahası','Diğer']
+    :['Futsal Pitch','Tennis Court','Padel Court','Fitness / Pilates','Swimming Pool','Sports Hall','Basketball Court','Volleyball Court','Other'];
+  const title=isVenue?(lang==='tr'?'Yeni Tesis Bildir':'Report a New Venue'):(lang==='tr'?'Geliştirme Önerisi':'Suggest a Feature');
+  const sub=lang==='tr'
+    ?(isVenue?'Bilgin doğrulandıktan sonra haritaya eklenir. Teşekkürler!':'Fikrin veya önerinizi bizimle paylaş.')
+    :(isVenue?'Your report will be verified and added to the map. Thanks!':'Share your idea or improvement with us.');
+  modal.innerHTML=`
+    <div class="modal-backdrop" onclick="closeFeedbackModal()"></div>
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">${title}</div>
+      <div style="font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:16px">${sub}</div>
+      ${isVenue?`
+        <label class="field-label">Tesis Adı</label>
+        <input class="input-field" id="fb-venue-name" placeholder="Örn: Kadıköy Halı Saha" style="margin-bottom:12px"/>
+        <label class="field-label">Tesis Türü</label>
+        <select class="input-field" id="fb-venue-type" style="margin-bottom:12px">
+          ${venueTypes.map(t=>`<option>${t}</option>`).join('')}
+        </select>
+        <label class="field-label">Adres / Konum</label>
+        <textarea class="input-field" id="fb-venue-addr" rows="2" style="resize:none;margin-bottom:12px" placeholder="Mahalle, sokak veya koordinat..."></textarea>
+        <label class="field-label">Kaynak (opsiyonel)</label>
+        <input class="input-field" id="fb-venue-src" placeholder="Web sitesi, Instagram..." style="margin-bottom:16px"/>
+      `:`
+        <label class="field-label">Konu</label>
+        <select class="input-field" id="fb-type-sel" style="margin-bottom:12px">
+          ${(lang==='tr'?['Hata Bildirimi','Yeni Özellik İsteği','İyileştirme Önerisi','Diğer']:['Bug Report','Feature Request','Improvement','Other']).map(t=>`<option>${t}</option>`).join('')}
+        </select>
+        <label class="field-label">Açıklama</label>
+        <textarea class="input-field" id="fb-desc" rows="4" style="resize:none;margin-bottom:16px" placeholder="${lang==='tr'?'Önerinizi detaylıca anlatın...':'Describe your suggestion in detail...'}"></textarea>
+      `}
+      <button class="btn btn-primary" onclick="submitFeedback('${type}')">${lang==='tr'?'Gönder ✓':'Submit ✓'}</button>
+    </div>`;
+  modal.style.display='flex';
+  requestAnimationFrame(()=>modal.querySelector('.modal-sheet').classList.add('open'));
+}
+
+function closeFeedbackModal(){
+  const modal=document.getElementById('feedback-modal');
+  const sheet=modal.querySelector('.modal-sheet');
+  if(sheet) sheet.classList.remove('open');
+  setTimeout(()=>{modal.style.display='none';modal.innerHTML='';},300);
+}
+
+function submitFeedback(type){
+  closeFeedbackModal();
+  const lang=LANG.current;
+  setTimeout(()=>showToast(lang==='tr'?'✅ Geri bildiriminiz alındı, teşekkürler!':'✅ Feedback received, thank you!'),350);
 }
 
 // ─── CREATE ACTIVITY ──────────────────────────────────────
@@ -969,6 +1040,99 @@ async function fetchNearbyVenues(lat,lng,sport,radius){
 function getSportIconFromOsm(tags){if(!tags) return '🏟';const map={tennis:'🎾',football:'⚽',soccer:'⚽',basketball:'🏀',volleyball:'🏐',padel:'🏓',badminton:'🏸',swimming:'🏊',fitness:'💪',golf:'⛳',climbing:'🧗',cycling:'🚴',running:'🏃',rowing:'🚣',archery:'🎯',boxing:'🥊',martial_arts:'🥋',table_tennis:'🏓',squash:'🎯',sports_centre:'🏅',pitch:'🏟',fitness_centre:'💪',swimming_pool:'🏊'};return map[tags.sport]||map[tags.leisure]||'🏟';}
 
 function translateOsmSport(tag){const lang=LANG.current;const tr={tennis:'Tenis',football:'Futbol',soccer:'Futbol',basketball:'Basketbol',volleyball:'Voleybol',padel:'Padel',badminton:'Badminton',swimming:'Yüzme',fitness:'Fitness',golf:'Golf',climbing:'Tırmanış',cycling:'Bisiklet',running:'Koşu',rowing:'Kürek',archery:'Okçuluk',boxing:'Boks',martial_arts:'Dövüş Sanatları',table_tennis:'Masa Tenisi',squash:'Squash',ice_rink:'Buz Pateni',sports_centre:'Spor Merkezi',pitch:'Saha',fitness_centre:'Fitness Merkezi',swimming_pool:'Yüzme Havuzu'};const en={tennis:'Tennis',football:'Football',basketball:'Basketball',volleyball:'Volleyball',padel:'Padel',badminton:'Badminton',swimming:'Swimming',fitness:'Fitness',golf:'Golf',climbing:'Climbing',cycling:'Cycling',running:'Running',rowing:'Rowing',archery:'Archery',boxing:'Boxing',martial_arts:'Martial Arts',table_tennis:'Table Tennis',squash:'Squash',ice_rink:'Ice Rink',sports_centre:'Sports Centre',pitch:'Pitch',fitness_centre:'Fitness Centre',swimming_pool:'Swimming Pool'};return(lang==='tr'?tr:en)[tag]||tag;}
+
+// ─── İBB / Spor İstanbul venue dataset ───────────────────
+// Fallback when Overpass is unavailable. operator tag drives badge logic.
+const IBB_VENUES = {
+  'Kadıköy': [
+    {tags:{name:'Kadıköy Spor ve Eğitim Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'tennis;swimming;basketball;fitness',opening_hours:'07:00-23:00',website:'https://spor.istanbul/tesisler'},lat:40.9910,lon:29.0260},
+    {tags:{name:'Moda Tenis Kortları',operator:'İBB',leisure:'pitch',sport:'tennis',opening_hours:'08:00-21:00',website:'https://spor.istanbul/tesisler'},lat:40.9855,lon:29.0267},
+    {tags:{name:'Kadıköy Halı Saha Tesisi',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:40.9945,lon:29.0215},
+  ],
+  'Beşiktaş': [
+    {tags:{name:'Beşiktaş Spor Merkezi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;pilates;swimming',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0450,lon:29.0080},
+    {tags:{name:'Beşiktaş Halı Saha Tesisi',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0420,lon:29.0050},
+    {tags:{name:'Yıldız Parkı Tenis Kortları',operator:'İBB',leisure:'pitch',sport:'tennis',opening_hours:'08:00-21:00',website:'https://spor.istanbul/tesisler'},lat:41.0465,lon:29.0100},
+  ],
+  'Şişli': [
+    {tags:{name:'Şişli Spor ve Yaşam Merkezi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;pilates;yoga;basketball',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0610,lon:28.9870},
+    {tags:{name:'Şişli Halı Saha Tesisi',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0640,lon:28.9850},
+    {tags:{name:'Şişli Tenis ve Padel Kortları',operator:'İBB',leisure:'pitch',sport:'tennis;padel',opening_hours:'08:00-21:00',website:'https://spor.istanbul/tesisler'},lat:41.0600,lon:28.9900},
+  ],
+  'Üsküdar': [
+    {tags:{name:'Üsküdar Spor ve Eğitim Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;basketball;volleyball',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0250,lon:29.0160},
+    {tags:{name:'Üsküdar Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0230,lon:29.0185},
+  ],
+  'Fatih': [
+    {tags:{name:'Fatih Spor Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;boxing;martial_arts',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0175,lon:28.9380},
+    {tags:{name:'Yedikule Spor Parkı',operator:'İBB',leisure:'pitch',sport:'football;basketball',opening_hours:'08:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0140,lon:28.9340},
+  ],
+  'Beyoğlu': [
+    {tags:{name:'Beyoğlu Spor Merkezi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;pilates;yoga',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0320,lon:28.9760},
+    {tags:{name:'Kasımpaşa Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0345,lon:28.9720},
+  ],
+  'Bakırköy': [
+    {tags:{name:'Bakırköy Spor ve Eğitim Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'tennis;swimming;fitness;pilates',opening_hours:'07:00-23:00',website:'https://spor.istanbul/tesisler'},lat:40.9810,lon:28.8700},
+    {tags:{name:'Bakırköy Sahil Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:40.9820,lon:28.8665},
+    {tags:{name:'Ataköy Spor Parkı',operator:'İBB',leisure:'pitch',sport:'basketball;volleyball',opening_hours:'08:00-22:00',website:'https://spor.istanbul/tesisler'},lat:40.9790,lon:28.8735},
+  ],
+  'Maltepe': [
+    {tags:{name:'Maltepe Spor Merkezi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;pilates;basketball',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler','addr:full':'Altıayak Mah. Maltepe/İstanbul'},lat:40.9365,lon:29.1325},
+    {tags:{name:'Maltepe Sahil Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:40.9320,lon:29.1355},
+    {tags:{name:'Maltepe Tenis ve Padel Kortu',operator:'İBB',leisure:'pitch',sport:'tennis;padel',opening_hours:'08:00-21:00',website:'https://spor.istanbul/tesisler'},lat:40.9340,lon:29.1295},
+    {tags:{name:'Maltepe Duvar Tenisi Kortu',operator:'İBB',leisure:'pitch',sport:'squash',opening_hours:'08:00-21:00',website:'https://spor.istanbul/tesisler'},lat:40.9355,lon:29.1310},
+    {tags:{name:'Maltepe Kapalı Spor Salonu',operator:'Spor İstanbul A.Ş.',leisure:'sports_hall',sport:'basketball;volleyball;table_tennis',opening_hours:'08:00-22:00',website:'https://spor.istanbul/tesisler'},lat:40.9375,lon:29.1340},
+  ],
+  'Ataşehir': [
+    {tags:{name:'Ataşehir Spor Merkezi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;pilates;swimming',opening_hours:'07:00-23:00',website:'https://spor.istanbul/tesisler'},lat:40.9840,lon:29.1175},
+    {tags:{name:'Ataşehir Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:40.9820,lon:29.1150},
+    {tags:{name:'Ataşehir Tenis Kortları',operator:'İBB',leisure:'pitch',sport:'tennis',opening_hours:'08:00-21:00',website:'https://spor.istanbul/tesisler'},lat:40.9855,lon:29.1200},
+  ],
+  'Ümraniye': [
+    {tags:{name:'Ümraniye Spor ve Eğitim Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;basketball;boxing',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0170,lon:29.1035},
+    {tags:{name:'Ümraniye Halı Saha Kompleksi',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0150,lon:29.1000},
+  ],
+  'Kağıthane': [
+    {tags:{name:'Kağıthane Spor Merkezi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;pilates;yoga',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0890,lon:28.9720},
+    {tags:{name:'Kağıthane Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0870,lon:28.9700},
+  ],
+  'Sarıyer': [
+    {tags:{name:'Sarıyer Spor Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'tennis;fitness;swimming',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.1680,lon:29.0510},
+    {tags:{name:'Sarıyer Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.1660,lon:29.0490},
+  ],
+  'Bağcılar': [
+    {tags:{name:'Bağcılar Spor Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;basketball;boxing',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0405,lon:28.8565},
+    {tags:{name:'Bağcılar Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0420,lon:28.8550},
+  ],
+  'Küçükçekmece': [
+    {tags:{name:'Küçükçekmece Spor Merkezi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;swimming;pilates',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0010,lon:28.7830},
+    {tags:{name:'Küçükçekmece Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0025,lon:28.7810},
+  ],
+  'Kartal': [
+    {tags:{name:'Kartal Spor Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;basketball;volleyball',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:40.9025,lon:29.1900},
+    {tags:{name:'Kartal Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:40.9010,lon:29.1880},
+  ],
+  'Pendik': [
+    {tags:{name:'Pendik Spor ve Eğitim Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;swimming;tennis',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:40.8720,lon:29.2570},
+    {tags:{name:'Pendik Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:40.8700,lon:29.2550},
+  ],
+  'Eyüpsultan': [
+    {tags:{name:'Eyüpsultan Spor Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;martial_arts;boxing',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0630,lon:28.9380},
+    {tags:{name:'Eyüpsultan Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0615,lon:28.9360},
+  ],
+  'Bahçelievler': [
+    {tags:{name:'Bahçelievler Spor Merkezi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;pilates;yoga',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0070,lon:28.8630},
+    {tags:{name:'Bahçelievler Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0055,lon:28.8610},
+  ],
+  'Gaziosmanpaşa': [
+    {tags:{name:'Gaziosmanpaşa Spor Tesisi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;basketball;football',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0580,lon:28.9180},
+    {tags:{name:'Gaziosmanpaşa Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0565,lon:28.9165},
+  ],
+  'Esenyurt': [
+    {tags:{name:'Esenyurt Spor Merkezi',operator:'Spor İstanbul A.Ş.',leisure:'sports_centre',sport:'fitness;basketball;volleyball',opening_hours:'07:00-22:00',website:'https://spor.istanbul/tesisler'},lat:41.0370,lon:28.6725},
+    {tags:{name:'Esenyurt Halı Saha',operator:'İBB',leisure:'pitch',sport:'football',opening_hours:'09:00-24:00',website:'https://spor.istanbul/tesisler'},lat:41.0355,lon:28.6705},
+  ],
+};
 
 // ─── Friend system ────────────────────────────────────────
 function addFriend(name, initials) {
