@@ -16,22 +16,71 @@
 
 <div id="app">
 
-  <!-- ══════ LOGIN ══════ -->
-  <div id="screen-login" class="screen">
-    <div class="login-hero">
-      <div class="app-logo">🏅</div>
-      <div class="app-name">Social Sports</div>
-      <div class="app-tagline" id="app-tagline">Spor arkadaşını bul, sahaya çık.</div>
-      <div class="login-sports-icons">
-        <div class="sport-bubble">🎾</div><div class="sport-bubble">⚽</div>
-        <div class="sport-bubble">🏀</div><div class="sport-bubble">🏐</div>
-        <div class="sport-bubble">🧘</div><div class="sport-bubble">🚴</div>
+  <!-- ══════ SPLASH ══════ -->
+  <div id="screen-splash" class="screen">
+    <div class="splash-inner">
+      <div class="splash-logo">🏅</div>
+      <div class="splash-name">Social Sports</div>
+      <div class="splash-tagline">Spor arkadaşını bul, sahaya çık.</div>
+      <div class="splash-dots">
+        <span class="splash-dot active"></span>
+        <span class="splash-dot"></span>
+        <span class="splash-dot"></span>
       </div>
     </div>
-    <div class="login-bottom">
-      <button class="btn btn-google" id="google-login-btn" onclick="handleLogin()">Google ile Giriş Yap</button>
-      <p class="login-note" id="login-note">Giriş yaparak kullanım koşullarını kabul etmiş olursunuz.</p>
-      <button class="btn btn-ghost lang-toggle-btn" onclick="toggleLang()" style="margin-top:4px">EN</button>
+  </div>
+
+
+  <!-- ══════ AUTH ══════ -->
+  <div id="screen-auth" class="screen">
+    <div class="auth-hero">
+      <div class="auth-logo">🏅</div>
+      <div class="auth-logo-name">Social Sports</div>
+      <div class="auth-logo-tag">Spor arkadaşını bul, sahaya çık.</div>
+    </div>
+
+    <div class="auth-card">
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Giriş Yap</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Üye Ol</button>
+      </div>
+
+      <!-- Google -->
+      <button class="btn btn-google" id="google-auth-btn" onclick="handleGoogleAuth()">Google ile Giriş Yap</button>
+
+      <!-- Divider -->
+      <div class="auth-divider"><span id="auth-or">veya</span></div>
+
+      <!-- Login form -->
+      <div id="auth-login-form" style="display:flex;flex-direction:column;gap:12px">
+        <input class="input-field" id="auth-email" type="email" placeholder="E-posta adresi" />
+        <input class="input-field" id="auth-password" type="password" placeholder="Şifre" />
+        <button class="auth-forgot" onclick="showToast('📧 Şifre sıfırlama yakında!')">Şifremi unuttum</button>
+      </div>
+
+      <!-- Register form -->
+      <div id="auth-register-form" style="display:none;flex-direction:column;gap:12px">
+        <input class="input-field" id="auth-name" type="text" placeholder="Ad Soyad" />
+        <input class="input-field" id="auth-email-reg" type="email" placeholder="E-posta adresi" />
+        <input class="input-field" id="auth-password-reg" type="password" placeholder="Şifre" />
+      </div>
+
+      <button class="btn btn-primary" id="auth-submit-btn" onclick="handleAuth()">Giriş Yap</button>
+      <p class="auth-note">Giriş yaparak kullanım koşullarını kabul etmiş olursunuz.</p>
+    </div>
+
+    <button class="btn btn-ghost lang-toggle-btn" onclick="toggleLang()" style="margin:16px auto;width:auto">EN</button>
+  </div>
+
+
+  <!-- ══════ CITY SELECT ══════ -->
+  <div id="screen-city" class="screen">
+    <div class="city-screen-inner">
+      <div class="city-logo">🏅</div>
+      <div class="city-title" id="city-title">Şehrini Seç</div>
+      <div class="city-sub" id="city-sub">Aktivitelerini takip edeceğin şehri seç.</div>
+      <div class="city-grid" id="city-grid"></div>
     </div>
   </div>
 
@@ -44,6 +93,7 @@
         <span class="topbar-logo-name">Social Sports</span>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
+        <span class="city-badge" id="city-badge"></span>
         <button class="btn btn-icon lang-toggle-btn" onclick="toggleLang()" style="font-size:12px;font-weight:700;font-family:var(--font)">EN</button>
         <button class="btn btn-icon" onclick="navigate('notifs')">🔔</button>
       </div>
@@ -52,8 +102,7 @@
     <div class="screen-content">
       <div class="search-bar">
         <span style="font-size:16px">🔍</span>
-        <input id="search-input" type="text" placeholder="Spor, konum ara..." />
-        <span style="font-size:16px;cursor:pointer" onclick="navigate('explore')" title="Burada ne yapılabilir?">🗺</span>
+        <input id="search-input" type="text" placeholder="Spor, aktivite, konum ara..." />
       </div>
 
       <div class="filter-scroll" id="filter-chips"></div>
@@ -66,7 +115,6 @@
       <div id="home-list-view">
         <div class="section-header">
           <span class="section-title" id="home-section-title">Yakınındakiler</span>
-          <button class="btn btn-ghost" style="font-size:13px;padding:4px 0" onclick="navigate('explore')">Keşfet 🔍</button>
         </div>
         <div class="cards-list" id="activity-cards"></div>
       </div>
@@ -79,9 +127,10 @@
     <button class="fab" onclick="navigate('create')">＋</button>
 
     <nav class="bottom-nav">
-      <button class="nav-item active" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Keşfet</span></button>
-      <button class="nav-item" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">İlan Ver</span></button>
-      <button class="nav-item" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirimler</span></button>
+      <button class="nav-item active" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Akış</span></button>
+      <button class="nav-item" onclick="navigate('districts')"><span class="nav-icon">🏟</span><span class="nav-label">Mekanlar</span></button>
+      <button class="nav-item nav-create" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">Oluştur</span></button>
+      <button class="nav-item" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirim</span></button>
       <button class="nav-item" onclick="navigate('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
     </nav>
   </div>
@@ -110,11 +159,22 @@
             <div class="detail-info-icon">👥</div>
             <div><div class="detail-info-label">Kontenjan</div><div class="detail-info-value" id="detail-slots">—</div></div>
           </div>
-          <div class="detail-info-row" style="border-bottom:none">
+          <div class="detail-info-row">
             <div class="detail-info-icon">⭐</div>
             <div><div class="detail-info-label">Seviye</div><div class="detail-info-value" id="detail-level">—</div></div>
           </div>
+          <div class="detail-info-row" style="border-bottom:none">
+            <div class="detail-info-icon">🎫</div>
+            <div><div class="detail-info-label">Katılım & Gizlilik</div><div class="detail-info-value" id="detail-conditions"></div></div>
+          </div>
         </div>
+
+        <!-- Days -->
+        <div class="detail-section" style="padding:14px 16px">
+          <div class="detail-section-title">Uygun Günler</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px" id="detail-days"></div>
+        </div>
+
         <div class="detail-section" style="padding:16px">
           <div class="detail-section-title">Konum</div>
           <div id="detail-map-container"></div>
@@ -155,6 +215,46 @@
   </div>
 
 
+  <!-- ══════ DISTRICTS ══════ -->
+  <div id="screen-districts" class="screen">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="districts-city-name">Mekanlar</div>
+        <div style="font-size:12px;color:var(--text-secondary)" id="districts-sub">İlçe seç, spor tesislerini keşfet</div>
+      </div>
+      <button class="btn btn-icon lang-toggle-btn" onclick="toggleLang()" style="font-size:12px;font-weight:700;font-family:var(--font)">EN</button>
+    </div>
+    <div class="screen-content">
+      <div id="districts-map" style="height:240px;width:100%"></div>
+      <div class="districts-list" id="districts-list"></div>
+    </div>
+    <nav class="bottom-nav">
+      <button class="nav-item" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Akış</span></button>
+      <button class="nav-item active" onclick="navigate('districts')"><span class="nav-icon">🏟</span><span class="nav-label">Mekanlar</span></button>
+      <button class="nav-item nav-create" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">Oluştur</span></button>
+      <button class="nav-item" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirim</span></button>
+      <button class="nav-item" onclick="navigate('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
+    </nav>
+  </div>
+
+
+  <!-- ══════ DISTRICT DETAIL ══════ -->
+  <div id="screen-district_detail" class="screen">
+    <div class="topbar">
+      <button class="btn btn-icon" onclick="navigate('districts')" style="font-size:18px">←</button>
+      <span class="topbar-title" id="dd-name">İlçe</span>
+      <div style="width:44px"></div>
+    </div>
+    <div class="screen-content" style="padding-bottom:24px">
+      <div id="dd-map" style="height:200px;width:100%"></div>
+      <div class="dd-venues-wrap">
+        <div style="font-size:15px;font-weight:700;padding:16px 20px 8px">Spor Tesisleri</div>
+        <div id="dd-venues-list"></div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- ══════ CREATE ══════ -->
   <div id="screen-create" class="screen">
     <div class="topbar">
@@ -171,7 +271,7 @@
           <div class="sport-grid" id="sport-grid"></div>
         </div>
 
-        <!-- Location — context-aware label + Nominatim autocomplete -->
+        <!-- Location -->
         <div>
           <label class="field-label" id="location-label">Nerede buluşacaksınız?</label>
           <div class="location-input-wrapper">
@@ -188,7 +288,6 @@
             📍 Haritadan Konum Seç
           </button>
           <div id="create-map-container" style="display:none;height:200px;border-radius:14px;overflow:hidden;margin-top:10px"></div>
-          <!-- Real venues from OSM -->
           <div id="create-venues-list"></div>
         </div>
 
@@ -198,6 +297,27 @@
           <div class="row-fields">
             <input class="input-field" type="date" id="create-date" />
             <input class="input-field" type="time" id="create-time" value="18:00" />
+          </div>
+        </div>
+
+        <!-- Available Days -->
+        <div>
+          <label class="field-label" id="days-label">Uygun Günler</label>
+          <div class="days-picker" id="days-picker"></div>
+        </div>
+
+        <!-- Time Range -->
+        <div>
+          <label class="field-label" id="time-range-label">Saat Aralığı</label>
+          <div class="row-fields">
+            <div class="input-wrapper">
+              <span class="input-icon">🕐</span>
+              <input class="input-field" type="time" id="time-from" value="08:00" onchange="state.timeFrom=this.value" />
+            </div>
+            <div class="input-wrapper">
+              <span class="input-icon">🕕</span>
+              <input class="input-field" type="time" id="time-to" value="22:00" onchange="state.timeTo=this.value" />
+            </div>
           </div>
         </div>
 
@@ -214,6 +334,23 @@
         <div>
           <label class="field-label">Seviye</label>
           <div class="level-options" id="level-options"></div>
+        </div>
+
+        <!-- Join Condition -->
+        <div>
+          <label class="field-label" id="join-condition-label">Kimler Katılabilir?</label>
+          <div class="join-cond-options" id="join-condition-options"></div>
+        </div>
+
+        <!-- Friends Only -->
+        <div class="friends-only-row">
+          <div class="friends-only-text">
+            <div class="friends-only-label" id="friends-only-label">Sadece Arkadaşlarım Görsün</div>
+            <div class="friends-only-sub" id="friends-only-sub">İlan sadece arkadaş listendekilere görünür</div>
+          </div>
+          <div class="toggle-switch" id="friends-only-toggle" onclick="toggleFriendsOnly()">
+            <div class="toggle-knob"></div>
+          </div>
         </div>
 
         <!-- Equipment -->
@@ -233,46 +370,12 @@
     <div class="publish-bar">
       <button class="btn btn-primary" id="publish-btn" onclick="handlePublish()">İlanı Yayınla</button>
     </div>
-  </div>
 
-
-  <!-- ══════ EXPLORE — Burada ne yapılabilir? ══════ -->
-  <div id="screen-explore" class="screen">
-    <div class="topbar">
-      <button class="btn btn-icon" onclick="navigate('home')" style="font-size:18px">←</button>
-      <span class="topbar-title">Keşfet</span>
-      <button class="btn btn-icon lang-toggle-btn" onclick="toggleLang()" style="font-size:12px;font-weight:700;font-family:var(--font)">EN</button>
-    </div>
-    <div class="screen-content">
-      <div class="explore-section">
-
-        <!-- Başlık -->
-        <div>
-          <div style="font-size:20px;font-weight:800;margin-bottom:4px">🗺 Burada Ne Yapılabilir?</div>
-          <div style="font-size:13px;color:var(--text-secondary)">Mahalle veya ilçe yaz, yakındaki tüm spor tesislerini gör.</div>
-        </div>
-
-        <!-- Arama -->
-        <div class="explore-search-row">
-          <input class="input-field" id="explore-input" type="text"
-            placeholder="Kadıköy, Beşiktaş, Üsküdar..."
-            onkeydown="if(event.key==='Enter') exploreLocation()"
-            style="flex:1" />
-          <button class="btn btn-primary" onclick="exploreLocation()" style="width:auto;padding:12px 20px">🔍</button>
-        </div>
-
-        <!-- Harita -->
-        <div id="explore-map"></div>
-
-        <!-- Sonuçlar -->
-        <div id="explore-results"></div>
-
-      </div>
-    </div>
     <nav class="bottom-nav">
-      <button class="nav-item" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Keşfet</span></button>
-      <button class="nav-item" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">İlan Ver</span></button>
-      <button class="nav-item" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirimler</span></button>
+      <button class="nav-item" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Akış</span></button>
+      <button class="nav-item" onclick="navigate('districts')"><span class="nav-icon">🏟</span><span class="nav-label">Mekanlar</span></button>
+      <button class="nav-item nav-create active" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">Oluştur</span></button>
+      <button class="nav-item" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirim</span></button>
       <button class="nav-item" onclick="navigate('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
     </nav>
   </div>
@@ -304,9 +407,10 @@
       </div>
     </div>
     <nav class="bottom-nav">
-      <button class="nav-item" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Keşfet</span></button>
-      <button class="nav-item" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">İlan Ver</span></button>
-      <button class="nav-item" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirimler</span></button>
+      <button class="nav-item" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Akış</span></button>
+      <button class="nav-item" onclick="navigate('districts')"><span class="nav-icon">🏟</span><span class="nav-label">Mekanlar</span></button>
+      <button class="nav-item nav-create" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">Oluştur</span></button>
+      <button class="nav-item" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirim</span></button>
       <button class="nav-item active" onclick="navigate('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
     </nav>
   </div>
@@ -323,9 +427,10 @@
       <div class="notif-list" id="notifs-list"></div>
     </div>
     <nav class="bottom-nav">
-      <button class="nav-item" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Keşfet</span></button>
-      <button class="nav-item" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">İlan Ver</span></button>
-      <button class="nav-item active" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirimler</span></button>
+      <button class="nav-item" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Akış</span></button>
+      <button class="nav-item" onclick="navigate('districts')"><span class="nav-icon">🏟</span><span class="nav-label">Mekanlar</span></button>
+      <button class="nav-item nav-create" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">Oluştur</span></button>
+      <button class="nav-item active" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirim</span></button>
       <button class="nav-item" onclick="navigate('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
     </nav>
   </div>
