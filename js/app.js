@@ -251,6 +251,15 @@ const NOTIFICATIONS = [
   {id:1,unread:true,icon:'🎾',title:{tr:'Yeni katılım isteği',en:'New join request'},text:{tr:'Mert B. tenis ilanınıza katılmak istiyor. Seviye: Orta.',en:'Mert B. wants to join your tennis activity.'},time:{tr:'5 dk önce',en:'5 min ago'},hasActions:true},
   {id:2,unread:true,icon:'✅',title:{tr:'İsteğiniz kabul edildi!',en:'Request accepted!'},text:{tr:'Ahmet K. halı saha isteğinizi kabul etti.',en:'Ahmet K. accepted your futsal request.'},time:{tr:'1 saat önce',en:'1 hour ago'},hasActions:false},
   {id:3,unread:false,icon:'📅',title:{tr:'Alternatif zaman önerisi',en:'Alternative time proposed'},text:{tr:'Zeynep A. 17:30 yerine 19:00\'u öneriyor.',en:'Zeynep A. proposes 19:00 instead of 17:30.'},time:{tr:'3 saat önce',en:'3 hours ago'},hasActions:true},
+  {id:4,unread:true,icon:'👤',title:{tr:'Arkadaşlık İsteği',en:'Friend Request'},text:{tr:'Ahmet Y. sizi arkadaş olarak eklemek istiyor.',en:'Ahmet Y. wants to add you as a friend.'},time:{tr:'10 dk önce',en:'10 min ago'},hasActions:true,type:'friend'},
+];
+
+// ─── Friends ──────────────────────────────────────────────
+const FRIENDS = [
+  {id:1,name:'Mert Baran',  initials:'MB',sport:'tennis',    level:'intermediate',rating:4.7,mutualActivities:3},
+  {id:2,name:'Ceren Aydın', initials:'CA',sport:'volleyball',level:'beginner',    rating:4.9,mutualActivities:1},
+  {id:3,name:'Naz Kaya',    initials:'NK',sport:'football',  level:'beginner',    rating:4.8,mutualActivities:2},
+  {id:4,name:'Tolga Şahin', initials:'TS',sport:'basketball',level:'advanced',   rating:4.6,mutualActivities:0},
 ];
 
 // ─── State ────────────────────────────────────────────────
@@ -518,7 +527,7 @@ function renderDetail() {
   // Suggested players
   const suggested=SUGGESTED_PLAYERS.filter(p=>p.sport===a.sport).slice(0,3);
   document.getElementById('detail-suggested-players').innerHTML=suggested.length
-    ?suggested.map(p=>`<div class="participant-row" style="padding:8px 0"><div class="avatar">${p.initials}</div><div class="participant-info" style="flex:1"><div class="participant-name">${p.name}</div><div class="participant-level">⭐${p.rating} · ${p.distance} · ${t('level')[p.level]}</div></div><button class="btn btn-sm btn-outline" onclick="showToast('📨 Davet gönderildi!')" style="font-size:11px">${lang==='tr'?'Davet Et':'Invite'}</button></div>`).join('')
+    ?suggested.map(p=>`<div class="participant-row" style="padding:8px 0"><div class="avatar">${p.initials}</div><div class="participant-info" style="flex:1"><div class="participant-name">${p.name}</div><div class="participant-level">⭐${p.rating} · ${p.distance} · ${t('level')[p.level]}</div></div><button class="btn btn-sm btn-outline" onclick="addFriend('${p.name}','${p.initials}')" style="font-size:11px">${lang==='tr'?'+ Arkadaş':'+ Friend'}</button></div>`).join('')
     :`<div style="color:var(--text-secondary);font-size:13px">${lang==='tr'?'Öneri bulunamadı':'No suggestions'}</div>`;
 
   initDetailMap(a);
@@ -626,11 +635,11 @@ function initDistrictsMap(city, districts) {
 async function loadDistrictCounts(city, districts) {
   // Query all sport centers in the city bbox
   const [minLat,minLng,maxLat,maxLng]=city.bbox;
-  const query=`[out:json][timeout:30];(node["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall"](${minLat},${minLng},${maxLat},${maxLng});way["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall"](${minLat},${minLng},${maxLat},${maxLng});node["sport"](${minLat},${minLng},${maxLat},${maxLng});way["sport"](${minLat},${minLng},${maxLat},${maxLng}););out center 300;`;
+  const query=`[out:json][timeout:40];(node["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink|stadium|track"](${minLat},${minLng},${maxLat},${maxLng});way["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink|stadium|track"](${minLat},${minLng},${maxLat},${maxLng});node["sport"](${minLat},${minLng},${maxLat},${maxLng});way["sport"](${minLat},${minLng},${maxLat},${maxLng}););out center 1000;`;
   try {
     const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:`data=${encodeURIComponent(query)}`});
     const data=await r.json();
-    const venues=(data.elements||[]).filter(e=>e.tags?.name);
+    const venues=(data.elements||[]).filter(e=>e.tags?.leisure||e.tags?.sport);
 
     // Count per district (nearest district center)
     const counts={};
@@ -685,11 +694,11 @@ function renderDistrictDetail() {
 
 async function loadDistrictVenues(lat, lng, name) {
   const lang=LANG.current;
-  const query=`[out:json][timeout:20];(node["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink"](around:3500,${lat},${lng});way["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink"](around:3500,${lat},${lng});node["sport"](around:3500,${lat},${lng});way["sport"](around:3500,${lat},${lng}););out center tags 30;`;
+  const query=`[out:json][timeout:30];(node["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink|stadium|track"](around:4000,${lat},${lng});way["leisure"~"sports_centre|fitness_centre|swimming_pool|pitch|sports_hall|ice_rink|stadium|track"](around:4000,${lat},${lng});node["sport"](around:4000,${lat},${lng});way["sport"](around:4000,${lat},${lng}););out center tags 100;`;
   try {
     const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:`data=${encodeURIComponent(query)}`});
     const data=await r.json();
-    state.districtVenues=(data.elements||[]).filter(e=>e.tags?.name);
+    state.districtVenues=(data.elements||[]).filter(e=>e.tags?.name||e.tags?.operator||e.tags?.sport);
     renderVenueList(state.districtVenues);
     initDistrictDetailMap(lat,lng,state.districtVenues);
   } catch { renderVenueList([]); }
@@ -703,13 +712,17 @@ function renderVenueList(venues) {
   el.innerHTML=venues.map(v=>{
     const tags=v.tags||{};
     const vLat=v.lat||v.center?.lat; const vLng=v.lon||v.center?.lon;
-    const name=tags.name||(lang==='tr'?'İsimsiz Tesis':'Unnamed Venue');
+    const name=tags.name||tags.operator||(lang==='tr'?'İsimsiz Tesis':'Unnamed Venue');
     const sport=tags.sport||''; const leisure=tags.leisure||'';
     const sportIcon=getSportIconFromOsm(tags);
+    const leisureLabel={sports_centre:lang==='tr'?'Spor Merkezi':'Sports Centre',fitness_centre:lang==='tr'?'Fitness Merkezi':'Fitness Centre',swimming_pool:lang==='tr'?'Yüzme Havuzu':'Swimming Pool',pitch:lang==='tr'?'Saha':'Pitch',sports_hall:lang==='tr'?'Spor Salonu':'Sports Hall',ice_rink:lang==='tr'?'Buz Pateni Pisti':'Ice Rink',stadium:lang==='tr'?'Stadyum':'Stadium',track:lang==='tr'?'Atletizm Pisti':'Track'}[leisure]||leisure;
 
-    // Category badge
-    const isMunicipal=tags.operator&&/belediye|İBB|spor a\.ş/i.test(tags.operator);
-    const catBadge=isMunicipal
+    // Category badge — İBB / Belediye / Özel
+    const isIBB=tags.operator&&/İBB|ibb|spor istanbul|istanbul büyükşehir/i.test(tags.operator);
+    const isMunicipal=isIBB||(tags.operator&&/belediye|spor a\.ş/i.test(tags.operator))||tags['operator:type']==='government'||tags['operator:type']==='public_authority';
+    const catBadge=isIBB
+      ?`<span class="venue-cat-badge ibb">🏛 İBB</span>`
+      :isMunicipal
       ?`<span class="venue-cat-badge municipal">🏛 Belediye</span>`
       :`<span class="venue-cat-badge private">🏢 ${lang==='tr'?'Özel':'Private'}</span>`;
 
@@ -724,8 +737,11 @@ function renderVenueList(venues) {
     const websiteLink=website?`<a href="${website}" target="_blank" class="venue-link">🔗 ${t('venueWebsite')}</a>`:'';
     const phoneLink=phone?`<a href="tel:${phone}" class="venue-link">📞 ${phone}</a>`:'';
 
-    // Sports list
-    const sportsList=sport?sport.split(';').map(s=>`<span class="eq-tag">${translateOsmSport(s.trim())}</span>`).join(''):'';
+    // Sports list + leisure type
+    const sportsList=[
+      ...(sport?sport.split(';').map(s=>`<span class="eq-tag">${translateOsmSport(s.trim())}</span>`):[]),
+      ...(leisureLabel&&!sport?[`<span class="eq-tag">${leisureLabel}</span>`]:[]),
+    ].join('');
 
     return `
       <div class="venue-card">
@@ -863,6 +879,17 @@ function renderProfile() {
   document.getElementById('profile-topbar-title').textContent=t('profileTitle');
   document.getElementById('profile-sports-title').textContent=lang==='tr'?'Sporlarım':'My Sports';
   document.getElementById('profile-history-title').textContent=lang==='tr'?'Aktivite Geçmişi':'Activity History';
+  document.getElementById('profile-friends-title').textContent=lang==='tr'?`Arkadaşlarım (${FRIENDS.length})`:`My Friends (${FRIENDS.length})`;
+  document.getElementById('profile-friends').innerHTML=FRIENDS.map(f=>`
+    <div class="friend-row">
+      <div class="avatar">${f.initials}</div>
+      <div class="friend-info">
+        <div class="friend-name">${f.name}</div>
+        <div class="friend-meta">${t('sports')[f.sport]||f.sport} · ${t('level')[f.level]} · ⭐${f.rating}${f.mutualActivities?` · ${f.mutualActivities} ${lang==='tr'?'ortak':'mutual'}`:''}
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline" onclick="showToast('💬 '+(LANG.current==='tr'?'Mesaj yakında!':'Messaging soon!'))" style="font-size:12px;padding:6px 12px">💬</button>
+    </div>`).join('');
 }
 
 // ─── NOTIFS ───────────────────────────────────────────────
@@ -943,6 +970,13 @@ function getSportIconFromOsm(tags){if(!tags) return '🏟';const map={tennis:'�
 
 function translateOsmSport(tag){const lang=LANG.current;const tr={tennis:'Tenis',football:'Futbol',soccer:'Futbol',basketball:'Basketbol',volleyball:'Voleybol',padel:'Padel',badminton:'Badminton',swimming:'Yüzme',fitness:'Fitness',golf:'Golf',climbing:'Tırmanış',cycling:'Bisiklet',running:'Koşu',rowing:'Kürek',archery:'Okçuluk',boxing:'Boks',martial_arts:'Dövüş Sanatları',table_tennis:'Masa Tenisi',squash:'Squash',ice_rink:'Buz Pateni',sports_centre:'Spor Merkezi',pitch:'Saha',fitness_centre:'Fitness Merkezi',swimming_pool:'Yüzme Havuzu'};const en={tennis:'Tennis',football:'Football',basketball:'Basketball',volleyball:'Volleyball',padel:'Padel',badminton:'Badminton',swimming:'Swimming',fitness:'Fitness',golf:'Golf',climbing:'Climbing',cycling:'Cycling',running:'Running',rowing:'Rowing',archery:'Archery',boxing:'Boxing',martial_arts:'Martial Arts',table_tennis:'Table Tennis',squash:'Squash',ice_rink:'Ice Rink',sports_centre:'Sports Centre',pitch:'Pitch',fitness_centre:'Fitness Centre',swimming_pool:'Swimming Pool'};return(lang==='tr'?tr:en)[tag]||tag;}
 
+// ─── Friend system ────────────────────────────────────────
+function addFriend(name, initials) {
+  if(FRIENDS.find(f=>f.name===name)){showToast(LANG.current==='tr'?'Zaten arkadaşsınız!':'Already friends!');return;}
+  FRIENDS.push({id:Date.now(),name,initials,sport:'tennis',level:'beginner',rating:4.5,mutualActivities:0});
+  showToast(LANG.current==='tr'?`👤 ${name} arkadaş listene eklendi!`:`👤 ${name} added to friends!`);
+}
+
 // ─── Event handlers ────────────────────────────────────────
 function setFilter(id){state.activeFilter=id;renderHome();}
 function setHomeView(v){state.homeView=v;renderHome();}
@@ -955,8 +989,32 @@ function toggleDay(d){state.selectedDays.has(d)?state.selectedDays.delete(d):sta
 function toggleEquipment(id){state.checkedEquipment.has(id)?state.checkedEquipment.delete(id):state.checkedEquipment.add(id);renderCreate();}
 function handleJoin(){showToast('🎉 '+t('joined'));}
 function handlePropose(){openProposeModal();}
-function handlePublish(){if(!state.selectedSport){showToast(LANG.current==='tr'?'⚠️ Lütfen bir spor seçin':'⚠️ Please select a sport');return;}showToast('🎉 '+t('published'));state.selectedSport=null;state.selectedLevel=null;state.joinCondition='all';state.friendsOnly=false;state.selectedDays.clear();state.checkedEquipment.clear();state.createCoords=null;state.createLocationName='';state.createMapVisible=false;setTimeout(()=>navigate('home'),800);}
-function handleNotif(id,action){showToast(action==='accept'?(LANG.current==='tr'?'✅ Kabul edildi':'✅ Accepted'):(LANG.current==='tr'?'❌ Reddedildi':'❌ Rejected'));const n=NOTIFICATIONS.find(n=>n.id===id);if(n){n.hasActions=false;n.unread=false;}renderNotifs();}
+function handlePublish(){
+  if(!state.selectedSport){showToast(LANG.current==='tr'?'⚠️ Lütfen bir spor seçin':'⚠️ Please select a sport');return;}
+  if(state.friendsOnly){
+    const n=FRIENDS.length;
+    showToast(LANG.current==='tr'?`🔒 Yayınlandı · ${n} arkadaşına bildirim gönderildi!`:`🔒 Published · Notified ${n} friends!`);
+  } else {
+    showToast('🎉 '+t('published'));
+  }
+  state.selectedSport=null;state.selectedLevel=null;state.joinCondition='all';state.friendsOnly=false;state.selectedDays.clear();state.checkedEquipment.clear();state.createCoords=null;state.createLocationName='';state.createMapVisible=false;
+  setTimeout(()=>navigate('home'),800);
+}
+function handleNotif(id,action){
+  const n=NOTIFICATIONS.find(n=>n.id===id);
+  if(n?.type==='friend'){
+    if(action==='accept'){
+      FRIENDS.push({id:Date.now(),name:'Ahmet Y.',initials:'AY',sport:'football',level:'beginner',rating:4.5,mutualActivities:0});
+      showToast(LANG.current==='tr'?'👤 Arkadaş eklendi!':'👤 Friend added!');
+    } else {
+      showToast(LANG.current==='tr'?'❌ İstek reddedildi':'❌ Request rejected');
+    }
+  } else {
+    showToast(action==='accept'?(LANG.current==='tr'?'✅ Kabul edildi':'✅ Accepted'):(LANG.current==='tr'?'❌ Reddedildi':'❌ Rejected'));
+  }
+  if(n){n.hasActions=false;n.unread=false;}
+  renderNotifs();
+}
 function toggleLang(){LANG.current=LANG.current==='tr'?'en':'tr';document.querySelectorAll('.lang-toggle-btn').forEach(b=>b.textContent=LANG.current==='tr'?'EN':'TR');renderScreen(state.currentScreen);}
 
 // ─── Toast ─────────────────────────────────────────────────

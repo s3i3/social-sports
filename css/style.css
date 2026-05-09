@@ -1746,6 +1746,7 @@ body {
   padding: 3px 8px;
   border-radius: var(--radius-pill);
 }
+.venue-cat-badge.ibb       { background: #FFF7ED; color: #C2410C; }
 .venue-cat-badge.municipal { background: #EFF6FF; color: #1D4ED8; }
 .venue-cat-badge.private   { background: #F0FDF4; color: #166534; }
 
@@ -1900,6 +1901,20 @@ body {
   padding: 3px 10px;
   border-radius: var(--radius-pill);
 }
+
+/* ─── Friends list ─────────────────────────────────────────── */
+.friend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.friend-row:last-child { border-bottom: none; }
+
+.friend-info { flex: 1; }
+.friend-name { font-size: 14px; font-weight: 600; }
+.friend-meta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
 /* ─── Responsive ───────────────────────────────────────────── */
 @media (min-width: 430px) {
