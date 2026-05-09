@@ -9,13 +9,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Leaflet.js -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
 <div id="app">
 
   <!-- ══════════════════════════════════════════════
-       SCREEN: LOGIN
+       LOGIN
   ══════════════════════════════════════════════ -->
   <div id="screen-login" class="screen">
     <div class="login-hero">
@@ -27,95 +30,82 @@
         <div class="sport-bubble">⚽</div>
         <div class="sport-bubble">🏀</div>
         <div class="sport-bubble">🏐</div>
-        <div class="sport-bubble">🏓</div>
+        <div class="sport-bubble">🧘</div>
+        <div class="sport-bubble">🚴</div>
       </div>
     </div>
-
     <div class="login-bottom">
-      <button class="btn btn-google" id="google-login-btn" onclick="handleLogin()">
-        Google ile Giriş Yap
-      </button>
+      <button class="btn btn-google" id="google-login-btn" onclick="handleLogin()">Google ile Giriş Yap</button>
       <p class="login-note" id="login-note">Giriş yaparak kullanım koşullarını kabul etmiş olursunuz.</p>
-
-      <!-- Dil toggle -->
-      <button class="btn btn-ghost" id="lang-toggle" onclick="toggleLang()" style="margin-top:4px">
-        EN
-      </button>
+      <button class="btn btn-ghost lang-toggle-btn" onclick="toggleLang()" style="margin-top:4px">EN</button>
     </div>
   </div>
 
 
   <!-- ══════════════════════════════════════════════
-       SCREEN: HOME FEED
+       HOME FEED
   ══════════════════════════════════════════════ -->
   <div id="screen-home" class="screen">
-
-    <!-- Top Bar -->
     <div class="topbar">
       <div class="topbar-logo">
         <div class="topbar-logo-icon">🏅</div>
         <span class="topbar-logo-name">Social Sports</span>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn btn-icon" id="lang-toggle-home" onclick="toggleLang(); renderHome()" style="font-size:12px;font-weight:700;font-family:var(--font)">EN</button>
+        <button class="btn btn-icon lang-toggle-btn" onclick="toggleLang()" style="font-size:12px;font-weight:700;font-family:var(--font)">EN</button>
         <button class="btn btn-icon" onclick="navigate('notifs')">🔔</button>
       </div>
     </div>
 
-    <!-- Screen Content -->
     <div class="screen-content">
       <!-- Search -->
       <div class="search-bar">
         <span style="font-size:16px">🔍</span>
         <input id="search-input" type="text" placeholder="Spor, konum ara..." />
-        <span style="font-size:16px;cursor:pointer">🎯</span>
+        <span style="font-size:16px;cursor:pointer" onclick="showToast('📍 Konum tespit ediliyor...')">🎯</span>
       </div>
 
       <!-- Sport Filters -->
       <div class="filter-scroll" id="filter-chips"></div>
 
-      <!-- Activity Cards -->
-      <div class="section-header">
-        <span class="section-title" id="home-section-title">Yakınındakiler</span>
-        <span class="btn btn-ghost" style="font-size:13px;padding:4px 0">Tümünü Gör →</span>
+      <!-- List / Map toggle -->
+      <div class="view-toggle">
+        <button class="view-toggle-btn active" id="btn-list-view" onclick="setHomeView('list')">☰ Liste</button>
+        <button class="view-toggle-btn" id="btn-map-view" onclick="setHomeView('map')">🗺 Harita</button>
       </div>
 
-      <div class="cards-list" id="activity-cards"></div>
+      <!-- LIST VIEW -->
+      <div id="home-list-view">
+        <div class="section-header">
+          <span class="section-title" id="home-section-title">Yakınındakiler</span>
+          <span class="btn btn-ghost" style="font-size:13px;padding:4px 0">Tümünü Gör →</span>
+        </div>
+        <div class="cards-list" id="activity-cards"></div>
+      </div>
+
+      <!-- MAP VIEW -->
+      <div id="home-map-view">
+        <div id="home-map-container"></div>
+      </div>
     </div>
 
-    <!-- FAB: Create Activity -->
     <button class="fab" onclick="navigate('create')" title="İlan Oluştur">＋</button>
 
-    <!-- Bottom Nav -->
     <nav class="bottom-nav">
-      <button class="nav-item active" onclick="navigate('home')">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">Keşfet</span>
-      </button>
-      <button class="nav-item" onclick="navigate('create')">
-        <span class="nav-icon">➕</span>
-        <span class="nav-label">İlan Ver</span>
-      </button>
-      <button class="nav-item" onclick="navigate('notifs')">
-        <span class="nav-icon">🔔</span>
-        <span class="nav-label">Bildirimler</span>
-      </button>
-      <button class="nav-item" onclick="navigate('profile')">
-        <span class="nav-icon">👤</span>
-        <span class="nav-label">Profil</span>
-      </button>
+      <button class="nav-item active" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Keşfet</span></button>
+      <button class="nav-item" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">İlan Ver</span></button>
+      <button class="nav-item" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirimler</span></button>
+      <button class="nav-item" onclick="navigate('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
     </nav>
   </div>
 
 
   <!-- ══════════════════════════════════════════════
-       SCREEN: ACTIVITY DETAIL
+       ACTIVITY DETAIL
   ══════════════════════════════════════════════ -->
   <div id="screen-detail" class="screen">
-
     <div class="screen-content" style="padding-bottom:140px">
 
-      <!-- Hero gradient banner -->
       <div class="detail-hero">
         <button class="detail-back" onclick="navigate('home')">
           ← <span id="detail-back-text">Geri</span>
@@ -127,45 +117,30 @@
 
       <div class="detail-body">
 
-        <!-- Info section -->
+        <!-- Info -->
         <div class="detail-section">
           <div class="detail-info-row">
             <div class="detail-info-icon">🗓</div>
-            <div>
-              <div class="detail-info-label" id="detail-when-label">Tarih & Saat</div>
-              <div class="detail-info-value" id="detail-datetime">12 Mayıs · 18:00</div>
-            </div>
+            <div><div class="detail-info-label" id="detail-when-label">Tarih & Saat</div><div class="detail-info-value" id="detail-datetime">—</div></div>
           </div>
           <div class="detail-info-row">
             <div class="detail-info-icon">📍</div>
-            <div>
-              <div class="detail-info-label" id="detail-where-label">Konum</div>
-              <div class="detail-info-value" id="detail-location">Kadıköy Tenis Kulübü</div>
-            </div>
+            <div><div class="detail-info-label" id="detail-where-label">Konum</div><div class="detail-info-value" id="detail-location">—</div></div>
           </div>
           <div class="detail-info-row">
             <div class="detail-info-icon">👥</div>
-            <div>
-              <div class="detail-info-label">Kontenjan</div>
-              <div class="detail-info-value" id="detail-slots">1 kişi aranıyor</div>
-            </div>
+            <div><div class="detail-info-label">Kontenjan</div><div class="detail-info-value" id="detail-slots">—</div></div>
           </div>
           <div class="detail-info-row" style="border-bottom:none">
             <div class="detail-info-icon">⭐</div>
-            <div>
-              <div class="detail-info-label">Seviye</div>
-              <div class="detail-info-value" id="detail-level">Orta</div>
-            </div>
+            <div><div class="detail-info-label">Seviye</div><div class="detail-info-value" id="detail-level">—</div></div>
           </div>
         </div>
 
-        <!-- Map placeholder -->
-        <div class="detail-section">
-          <div class="map-placeholder" onclick="showToast('🗺 Harita entegrasyonu yakında!')">
-            <span style="font-size:32px">🗺</span>
-            <span>Haritada Gör</span>
-            <span style="font-size:11px;opacity:0.7">Yakında — Google Maps entegrasyonu</span>
-          </div>
+        <!-- MAP — Leaflet -->
+        <div class="detail-section" style="padding:16px">
+          <div class="detail-section-title">Konum</div>
+          <div id="detail-map-container"></div>
         </div>
 
         <!-- Host -->
@@ -174,7 +149,7 @@
           <div style="display:flex;align-items:center;gap:12px">
             <div class="avatar avatar-lg" id="detail-host-initials">SU</div>
             <div>
-              <div style="font-size:16px;font-weight:700" id="detail-host-name">Seren U.</div>
+              <div style="font-size:16px;font-weight:700" id="detail-host-name">—</div>
               <div style="font-size:13px;color:var(--text-secondary);margin-top:2px">⭐ 4.9 · 12 aktivite</div>
             </div>
           </div>
@@ -193,24 +168,33 @@
           <div class="participants-list" id="detail-participants"></div>
         </div>
 
+        <!-- Suggested players -->
+        <div class="detail-section">
+          <div class="detail-section-title" id="detail-suggested-title">Önerilen Oyuncular</div>
+          <div id="detail-suggested-players"></div>
+        </div>
+
+        <!-- Nearby venues -->
+        <div class="detail-section">
+          <div class="detail-section-title" id="detail-venue-title">Yakın Mekanlar</div>
+          <div id="detail-venues"></div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Join Bar (fixed bottom) -->
+    <!-- Join / Propose Bar -->
     <div class="join-bar">
       <button class="btn btn-primary" id="join-btn" onclick="handleJoin()">Katılmak İstiyorum</button>
       <button class="btn btn-outline" id="propose-btn" onclick="handlePropose()">Alternatif Öner</button>
     </div>
-
   </div>
 
 
   <!-- ══════════════════════════════════════════════
-       SCREEN: CREATE ACTIVITY
+       CREATE ACTIVITY
   ══════════════════════════════════════════════ -->
   <div id="screen-create" class="screen">
-
-    <!-- Top Bar -->
     <div class="topbar">
       <button class="btn btn-icon" onclick="navigate('home')" style="font-size:18px">←</button>
       <span class="topbar-title" id="create-topbar-title">İlan Oluştur</span>
@@ -222,22 +206,26 @@
 
         <!-- Sport -->
         <div>
-          <label class="field-label" data-label="chooseSport">Spor Seç</label>
+          <label class="field-label">Spor / Aktivite Seç</label>
           <div class="sport-grid" id="sport-grid"></div>
         </div>
 
-        <!-- Location -->
+        <!-- Location + Map -->
         <div>
-          <label class="field-label" data-label="location">Konum</label>
+          <label class="field-label">Konum</label>
           <div class="input-wrapper">
             <span class="input-icon">📍</span>
-            <input class="input-field" id="create-location" type="text" placeholder="Nerede oynayacaksınız?" />
+            <input class="input-field" id="create-location-input" type="text" placeholder="Nerede oynayacaksınız?" />
           </div>
+          <button class="btn btn-outline" id="create-pick-map-btn" style="margin-top:8px;font-size:13px" onclick="toggleCreateMap()">
+            📍 Haritadan Konum Seç
+          </button>
+          <div id="create-map-container" style="display:none;margin-top:10px;height:200px;border-radius:14px;overflow:hidden"></div>
         </div>
 
         <!-- Date & Time -->
         <div>
-          <label class="field-label" data-label="date">Tarih & Saat</label>
+          <label class="field-label">Tarih & Saat</label>
           <div class="row-fields">
             <input class="input-field" type="date" id="create-date" />
             <input class="input-field" type="time" id="create-time" value="18:00" />
@@ -246,7 +234,7 @@
 
         <!-- Players -->
         <div>
-          <label class="field-label" data-label="players">Kaç Kişi?</label>
+          <label class="field-label">Kaç Kişi?</label>
           <div class="input-wrapper">
             <span class="input-icon">👥</span>
             <input class="input-field" type="number" min="1" max="22" value="1" id="create-players" />
@@ -255,138 +243,111 @@
 
         <!-- Level -->
         <div>
-          <label class="field-label" data-label="skillLevel">Seviye</label>
+          <label class="field-label">Seviye</label>
           <div class="level-options" id="level-options"></div>
         </div>
 
         <!-- Equipment -->
         <div>
-          <label class="field-label" data-label="equipment">Ekipman (bende var)</label>
+          <label class="field-label">Ekipman (bende var)</label>
           <div class="equipment-checks" id="equipment-checks"></div>
         </div>
 
         <!-- Notes -->
         <div>
-          <label class="field-label" data-label="notes">Notlar</label>
-          <textarea class="input-field" id="create-notes" rows="3"
-            style="resize:none;line-height:1.5"
-            placeholder="Ek bilgi, özel koşullar..."></textarea>
+          <label class="field-label">Notlar</label>
+          <textarea class="input-field" id="create-notes" rows="3" style="resize:none;line-height:1.5" placeholder="Ek bilgi, özel koşullar..."></textarea>
         </div>
 
       </div>
     </div>
 
-    <!-- Publish Bar -->
     <div class="publish-bar">
       <button class="btn btn-primary" id="publish-btn" onclick="handlePublish()">İlanı Yayınla</button>
     </div>
-
   </div>
 
 
   <!-- ══════════════════════════════════════════════
-       SCREEN: PROFILE
+       PROFILE
   ══════════════════════════════════════════════ -->
   <div id="screen-profile" class="screen">
-
-    <!-- Top Bar -->
     <div class="topbar">
       <span class="topbar-title" id="profile-topbar-title">Profilim</span>
-      <button class="btn btn-icon" onclick="showToast('⚙️ Ayarlar yakında!')" style="font-size:18px">⚙️</button>
+      <button class="btn btn-icon" onclick="showToast('⚙️ Ayarlar yakında!')">⚙️</button>
     </div>
-
     <div class="screen-content">
-
-      <!-- Hero -->
       <div class="profile-hero">
         <div class="avatar avatar-lg" id="profile-initials">SU</div>
         <div class="profile-name" id="profile-name">Seren Uğurlu</div>
-        <div class="profile-sub" id="profile-sub">İstanbul · Üye: Mayıs 2026</div>
+        <div class="profile-sub" id="profile-sub">İstanbul</div>
         <div class="profile-stats" id="profile-stats"></div>
       </div>
-
       <div class="profile-body">
-
-        <!-- My Sports -->
         <div class="profile-section">
           <div class="profile-section-header" id="profile-sports-title">Sporlarım</div>
           <div id="profile-sports"></div>
         </div>
-
-        <!-- Activity History -->
         <div class="profile-section">
           <div class="profile-section-header" id="profile-history-title">Aktivite Geçmişi</div>
           <div id="profile-history"></div>
         </div>
-
-        <!-- Edit profile placeholder -->
-        <button class="btn btn-outline" style="margin-top:16px" onclick="showToast('✏️ Profil düzenleme yakında!')">
-          ✏️ Profili Düzenle
-        </button>
-
+        <button class="btn btn-outline" style="margin-top:16px" onclick="showToast('✏️ Profil düzenleme yakında!')">✏️ Profili Düzenle</button>
       </div>
     </div>
-
-    <!-- Bottom Nav -->
     <nav class="bottom-nav">
-      <button class="nav-item" onclick="navigate('home')">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">Keşfet</span>
-      </button>
-      <button class="nav-item" onclick="navigate('create')">
-        <span class="nav-icon">➕</span>
-        <span class="nav-label">İlan Ver</span>
-      </button>
-      <button class="nav-item" onclick="navigate('notifs')">
-        <span class="nav-icon">🔔</span>
-        <span class="nav-label">Bildirimler</span>
-      </button>
-      <button class="nav-item active" onclick="navigate('profile')">
-        <span class="nav-icon">👤</span>
-        <span class="nav-label">Profil</span>
-      </button>
+      <button class="nav-item" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Keşfet</span></button>
+      <button class="nav-item" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">İlan Ver</span></button>
+      <button class="nav-item" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirimler</span></button>
+      <button class="nav-item active" onclick="navigate('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
     </nav>
   </div>
 
 
   <!-- ══════════════════════════════════════════════
-       SCREEN: NOTIFICATIONS
+       NOTIFICATIONS
   ══════════════════════════════════════════════ -->
   <div id="screen-notifs" class="screen">
-
-    <!-- Top Bar -->
     <div class="topbar">
       <button class="btn btn-icon" onclick="navigate('home')" style="font-size:18px">←</button>
       <span class="topbar-title" id="notifs-topbar-title">Bildirimler</span>
       <div style="width:44px"></div>
     </div>
-
     <div class="screen-content">
       <div class="notif-list" id="notifs-list"></div>
     </div>
-
-    <!-- Bottom Nav -->
     <nav class="bottom-nav">
-      <button class="nav-item" onclick="navigate('home')">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">Keşfet</span>
-      </button>
-      <button class="nav-item" onclick="navigate('create')">
-        <span class="nav-icon">➕</span>
-        <span class="nav-label">İlan Ver</span>
-      </button>
-      <button class="nav-item active" onclick="navigate('notifs')">
-        <span class="nav-icon">🔔</span>
-        <span class="nav-label">Bildirimler</span>
-      </button>
-      <button class="nav-item" onclick="navigate('profile')">
-        <span class="nav-icon">👤</span>
-        <span class="nav-label">Profil</span>
-      </button>
+      <button class="nav-item" onclick="navigate('home')"><span class="nav-icon">🏠</span><span class="nav-label">Keşfet</span></button>
+      <button class="nav-item" onclick="navigate('create')"><span class="nav-icon">➕</span><span class="nav-label">İlan Ver</span></button>
+      <button class="nav-item active" onclick="navigate('notifs')"><span class="nav-icon">🔔</span><span class="nav-label">Bildirimler</span></button>
+      <button class="nav-item" onclick="navigate('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
     </nav>
   </div>
 
+
+  <!-- ══════════════════════════════════════════════
+       PROPOSE MODAL (dinamik render)
+  ══════════════════════════════════════════════ -->
+  <div id="propose-modal"></div>
+
 </div><!-- /#app -->
+
+<script>
+  // Create map toggle — harita container'ı aç/kapat
+  function toggleCreateMap() {
+    const container = document.getElementById('create-map-container');
+    const btn = document.getElementById('create-pick-map-btn');
+    const lang = LANG.current;
+    if (container.style.display === 'none') {
+      container.style.display = 'block';
+      btn.textContent = '✕ ' + (lang === 'tr' ? 'Haritayı Kapat' : 'Close Map');
+      initCreateMap();
+    } else {
+      container.style.display = 'none';
+      btn.textContent = '📍 ' + t('pickLocation');
+    }
+  }
+</script>
 
 <script src="js/app.js"></script>
 </body>
