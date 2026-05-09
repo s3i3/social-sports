@@ -234,12 +234,29 @@ const SPORT_OSM = {tennis:'tennis',football:'football',basketball:'basketball',v
 
 // ─── Mock Activities ───────────────────────────────────────
 const ACTIVITIES = [
-  {id:1,sport:'tennis',icon:'🎾',title:{tr:'Tenis partneri arıyorum',en:'Looking for tennis partner'},host:{name:'Seren U.',initials:'SU'},location:{tr:'Kadıköy Tenis Kulübü',en:'Kadıköy Tennis Club'},coords:{lat:40.9909,lng:29.0295},date:'12 Mayıs',time:'18:00',slots:1,totalSlots:2,level:'intermediate',joinCondition:'intermediate',friendsOnly:false,days:['sat','sun'],timeFrom:'16:00',timeTo:'20:00',equipment:[{tr:'2 Tenis Raketi',en:'2 Tennis Rackets'},{tr:'Top bende',en:'Balls provided'}],note:{tr:'Raketim var, gerekirse paylaşabilirim.',en:'Rackets to share.'},participants:[{name:'Seren U.',initials:'SU',level:'intermediate'}]},
-  {id:2,sport:'football',icon:'⚽',title:{tr:'Halı saha — 3 kişi eksik',en:'Futsal — need 3 more'},host:{name:'Ahmet K.',initials:'AK'},location:{tr:'Beşiktaş Halı Saha',en:'Beşiktaş Futsal'},coords:{lat:41.0451,lng:29.0078},date:'13 Mayıs',time:'20:00',slots:3,totalSlots:10,level:'beginner',joinCondition:'all',friendsOnly:false,days:['mon','wed','fri'],timeFrom:'19:00',timeTo:'22:00',equipment:[],note:{tr:'Herkesin ayakkabısı olsun!',en:'Bring boots!'},participants:[{name:'Ahmet K.',initials:'AK',level:'beginner'},{name:'Mehmet Y.',initials:'MY',level:'beginner'}]},
-  {id:3,sport:'basketball',icon:'🏀',title:{tr:'3v3 Basketbol — Üsküdar',en:'3v3 Basketball — Üsküdar'},host:{name:'Zeynep A.',initials:'ZA'},location:{tr:'Üsküdar Açık Saha',en:'Üsküdar Open Court'},coords:{lat:41.0219,lng:29.0152},date:'14 Mayıs',time:'17:30',slots:2,totalSlots:6,level:'advanced',joinCondition:'advanced',friendsOnly:false,days:['tue','thu','sat'],timeFrom:'15:00',timeTo:'20:00',equipment:[{tr:'Top var',en:'Ball provided'}],note:{tr:'Rekabetçi oynuyoruz.',en:'Competitive play.'},participants:[{name:'Zeynep A.',initials:'ZA',level:'advanced'}]},
-  {id:4,sport:'yoga',icon:'🧘',title:{tr:'Sabah yogası — Gülhane',en:'Morning yoga — Gülhane'},host:{name:'Elif B.',initials:'EB'},location:{tr:'Gülhane Parkı',en:'Gülhane Park'},coords:{lat:41.0131,lng:28.9812},date:'16 Mayıs',time:'08:00',slots:8,totalSlots:15,level:'beginner',joinCondition:'all',friendsOnly:true,days:['sat','sun'],timeFrom:'07:00',timeTo:'10:00',equipment:[{tr:'Kendi matını getir',en:'Bring your mat'}],note:{tr:'Sadece arkadaşlarıma açık.',en:'Friends only activity.'},participants:[{name:'Elif B.',initials:'EB',level:'beginner'}]},
-  {id:5,sport:'running',icon:'🏃',title:{tr:'Sabah koşusu — Caddebostan',en:'Morning run — Caddebostan'},host:{name:'Lena S.',initials:'LS'},location:{tr:'Caddebostan Sahili',en:'Caddebostan Promenade'},coords:{lat:40.9627,lng:29.0601},date:'11 Mayıs',time:'07:00',slots:5,totalSlots:10,level:'beginner',joinCondition:'all',friendsOnly:false,days:['mon','tue','wed','thu','fri'],timeFrom:'06:30',timeTo:'08:30',equipment:[],note:{tr:'5 km, rahat tempo.',en:'5km easy pace.'},participants:[{name:'Lena S.',initials:'LS',level:'beginner'}]},
+  {id:1,sport:'tennis',icon:'🎾',title:{tr:'Tenis partneri arıyorum',en:'Looking for tennis partner'},host:{name:'Seren U.',initials:'SU'},location:{tr:'Kadıköy Tenis Kulübü',en:'Kadıköy Tennis Club'},coords:{lat:40.9909,lng:29.0295},dateISO:'2026-05-12',date:'12 Mayıs',time:'18:00',slots:1,totalSlots:2,level:'intermediate',joinCondition:'intermediate',friendsOnly:false,days:['sat','sun'],timeFrom:'16:00',timeTo:'20:00',cost:200,recurring:false,equipment:[{tr:'2 Tenis Raketi',en:'2 Tennis Rackets'},{tr:'Top bende',en:'Balls provided'}],note:{tr:'Raketim var, gerekirse paylaşabilirim.',en:'Rackets to share.'},participants:[{name:'Seren U.',initials:'SU',level:'intermediate'}]},
+  {id:2,sport:'football',icon:'⚽',title:{tr:'Halı saha — 3 kişi eksik',en:'Futsal — need 3 more'},host:{name:'Ahmet K.',initials:'AK'},location:{tr:'Beşiktaş Halı Saha',en:'Beşiktaş Futsal'},coords:{lat:41.0451,lng:29.0078},dateISO:'2026-05-13',date:'13 Mayıs',time:'20:00',slots:3,totalSlots:10,level:'beginner',joinCondition:'all',friendsOnly:false,days:['mon','wed','fri'],timeFrom:'19:00',timeTo:'22:00',cost:600,recurring:true,recurringFreq:'weekly',equipment:[],note:{tr:'Herkesin ayakkabısı olsun!',en:'Bring boots!'},participants:[{name:'Ahmet K.',initials:'AK',level:'beginner'},{name:'Mehmet Y.',initials:'MY',level:'beginner'}]},
+  {id:3,sport:'basketball',icon:'🏀',title:{tr:'3v3 Basketbol — Üsküdar',en:'3v3 Basketball — Üsküdar'},host:{name:'Zeynep A.',initials:'ZA'},location:{tr:'Üsküdar Açık Saha',en:'Üsküdar Open Court'},coords:{lat:41.0219,lng:29.0152},dateISO:'2026-05-14',date:'14 Mayıs',time:'17:30',slots:0,totalSlots:6,level:'advanced',joinCondition:'advanced',friendsOnly:false,days:['tue','thu','sat'],timeFrom:'15:00',timeTo:'20:00',cost:0,recurring:false,equipment:[{tr:'Top var',en:'Ball provided'}],note:{tr:'Rekabetçi oynuyoruz.',en:'Competitive play.'},participants:[{name:'Zeynep A.',initials:'ZA',level:'advanced'}]},
+  {id:4,sport:'yoga',icon:'🧘',title:{tr:'Sabah yogası — Gülhane',en:'Morning yoga — Gülhane'},host:{name:'Elif B.',initials:'EB'},location:{tr:'Gülhane Parkı',en:'Gülhane Park'},coords:{lat:41.0131,lng:28.9812},dateISO:'2026-05-16',date:'16 Mayıs',time:'08:00',slots:8,totalSlots:15,level:'beginner',joinCondition:'all',friendsOnly:true,days:['sat','sun'],timeFrom:'07:00',timeTo:'10:00',cost:0,recurring:true,recurringFreq:'weekly',equipment:[{tr:'Kendi matını getir',en:'Bring your mat'}],note:{tr:'Sadece arkadaşlarıma açık.',en:'Friends only activity.'},participants:[{name:'Elif B.',initials:'EB',level:'beginner'}]},
+  {id:5,sport:'running',icon:'🏃',title:{tr:'Sabah koşusu — Caddebostan',en:'Morning run — Caddebostan'},host:{name:'Lena S.',initials:'LS'},location:{tr:'Caddebostan Sahili',en:'Caddebostan Promenade'},coords:{lat:40.9627,lng:29.0601},dateISO:'2026-05-11',date:'11 Mayıs',time:'07:00',slots:5,totalSlots:10,level:'beginner',joinCondition:'all',friendsOnly:false,days:['mon','tue','wed','thu','fri'],timeFrom:'06:30',timeTo:'08:30',cost:0,recurring:true,recurringFreq:'daily',equipment:[],note:{tr:'5 km, rahat tempo.',en:'5km easy pace.'},participants:[{name:'Lena S.',initials:'LS',level:'beginner'}]},
+  {id:6,sport:'volleyball',icon:'🏐',title:{tr:'Plaj voleybolu — Florya',en:'Beach volleyball — Florya'},host:{name:'Mert B.',initials:'MB'},location:{tr:'Florya Plajı',en:'Florya Beach'},coords:{lat:40.9712,lng:28.7760},dateISO:'2026-05-07',date:'7 Mayıs',time:'16:00',slots:0,totalSlots:8,level:'beginner',joinCondition:'all',friendsOnly:false,days:['wed'],timeFrom:'15:00',timeTo:'18:00',cost:0,recurring:false,equipment:[{tr:'Voleybol topu bende',en:'Ball provided'}],note:{tr:'Geçti.',en:'Past.'},participants:[{name:'Mert B.',initials:'MB',level:'beginner'}]},
 ];
+
+// ─── Ready players (Anlık müsait) ─────────────────────────
+const READY_PLAYERS = [
+  {name:'Mert B.',  initials:'MB',sport:'tennis',    level:'intermediate',distance:'0.8 km',readySince:'5 dk'},
+  {name:'Ceren A.', initials:'CA',sport:'volleyball',level:'beginner',    distance:'1.3 km',readySince:'12 dk'},
+  {name:'Tolga Ş.', initials:'TS',sport:'basketball',level:'advanced',   distance:'2.1 km',readySince:'3 dk'},
+  {name:'Naz K.',   initials:'NK',sport:'football',  level:'beginner',    distance:'1.7 km',readySince:'20 dk'},
+  {name:'Deniz Y.', initials:'DY',sport:'tennis',    level:'beginner',    distance:'0.4 km',readySince:'8 dk'},
+];
+
+// ─── Streak & activity history ─────────────────────────────
+const STREAK = { current:4, best:7, thisWeek:2, totalActivities:22,
+  weeks:[1,3,2,1,3,2,4,2] }; // last 8 weeks activity counts
+
+// ─── Venue reviews store ───────────────────────────────────
+const VENUE_REVIEWS = {};
 
 const SUGGESTED_PLAYERS = [
   {name:'Mert B.',initials:'MB',sport:'tennis',level:'intermediate',distance:'0.8 km',rating:4.7},
@@ -286,6 +303,16 @@ const state = {
   authTab:'login',
   maps:{},
   venueMarkers:[],
+  // New feature state
+  nowReady: false,
+  gpsActive: false,
+  gpsRadius: 5,
+  userLat: null,
+  userLng: null,
+  venueCost: 0,
+  recurringActivity: false,
+  recurringFreq: 'weekly',
+  waitlist: {},
 };
 
 // ─── Router ───────────────────────────────────────────────
@@ -423,11 +450,31 @@ function renderHome() {
   // City badge
   const cityBadge=document.getElementById('city-badge');
   if(cityBadge&&state.selectedCity) cityBadge.textContent=state.selectedCity.emoji+' '+state.selectedCity.name;
+
+  // GPS filter button
+  const gpsBtn=document.getElementById('gps-filter-btn');
+  if(gpsBtn) gpsBtn.classList.toggle('active',state.gpsActive);
+
+  // Now-ready toggle
+  const nrToggle=document.getElementById('now-ready-toggle');
+  if(nrToggle) nrToggle.classList.toggle('on',state.nowReady);
+  const nrSection=document.getElementById('ready-players-section');
+  if(nrSection) nrSection.style.display=state.nowReady?'block':'none';
+  if(state.nowReady) renderReadyPlayers();
 }
+
+function haversine(lat1,lng1,lat2,lng2){const R=6371;const dLat=(lat2-lat1)*Math.PI/180;const dLng=(lng2-lng1)*Math.PI/180;const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
 
 function renderActivityList(filter) {
   const lang=LANG.current;
-  const filtered=filter==='all'?ACTIVITIES:ACTIVITIES.filter(a=>a.sport===filter);
+  let filtered=filter==='all'?ACTIVITIES:ACTIVITIES.filter(a=>a.sport===filter);
+  // Filter past activities
+  const today=new Date(); today.setHours(0,0,0,0);
+  filtered=filtered.filter(a=>!a.dateISO||new Date(a.dateISO)>=today);
+  // GPS distance filter
+  if(state.gpsActive&&state.userLat!=null){
+    filtered=filtered.filter(a=>haversine(state.userLat,state.userLng,a.coords.lat,a.coords.lng)<=state.gpsRadius);
+  }
   const cardsEl=document.getElementById('activity-cards');
   if(!filtered.length) {
     cardsEl.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">${lang==='tr'?'İlan bulunamadı':'No activities found'}</div><div class="empty-sub">${lang==='tr'?'Bu spor için henüz ilan yok. İlk ilanı sen aç!':'No activities yet. Be the first!'}</div></div>`;
@@ -439,6 +486,9 @@ function renderActivityList(filter) {
     const dayTags=a.days.slice(0,3).map(d=>`<span class="day-tag">${t('days')[d]}</span>`).join('');
     const joinBadge=a.joinCondition!=='all'?`<span class="join-badge">${t('joinConditions')[a.joinCondition]}</span>`:'';
     const friendsBadge=a.friendsOnly?`<span class="friends-badge">🔒 ${lang==='tr'?'Arkadaşlar':'Friends'}</span>`:'';
+    const recurringBadge=a.recurring?`<span class="recurring-badge">🔄 ${lang==='tr'?({weekly:'Haftalık',daily:'Her Gün',biweekly:'2 Haftada'}[a.recurringFreq]||'Tekrarlayan'):({weekly:'Weekly',daily:'Daily',biweekly:'Biweekly'}[a.recurringFreq]||'Recurring')}</span>`:'';
+    const costPerPerson=a.cost&&a.totalSlots?Math.ceil(a.cost/a.totalSlots):0;
+    const costBadge=costPerPerson?`<span class="cost-badge">💰 ~${costPerPerson}₺</span>`:'';
     return `
       <div class="activity-card" onclick="openDetail(${a.id})">
         <div class="card-sport-banner"></div>
@@ -453,7 +503,7 @@ function renderActivityList(filter) {
             <div class="meta-row"><span class="meta-icon">🕐</span>${a.timeFrom} – ${a.timeTo} · ${dayTags}</div>
           </div>
           ${eqTags?`<div class="equipment-tags">${eqTags}</div>`:''}
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${joinBadge}${friendsBadge}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${joinBadge}${friendsBadge}${recurringBadge}${costBadge}</div>
           <div class="card-footer">
             <div class="card-host"><div class="avatar">${a.host.initials}</div><span class="host-name">${a.host.name}</span></div>
             <span class="slots-badge ${isFull?'full':''}">${isFull?t('slotsFull'):'👥 '+t('slots',a.slots)}</span>
@@ -513,9 +563,22 @@ function renderDetail() {
   const daysEl=document.getElementById('detail-days');
   if(daysEl) daysEl.innerHTML=a.days.map(d=>`<span class="day-tag active">${t('days')[d]}</span>`).join('');
 
+  // Waitlist / Join button
   const joinBtn=document.getElementById('join-btn');
-  joinBtn.textContent=isFull?t('slotsFull'):t('join');
-  joinBtn.disabled=isFull; joinBtn.style.opacity=isFull?'0.5':'1';
+  const inWaitlist=state.waitlist[a.id];
+  if(isFull&&inWaitlist){
+    joinBtn.textContent=lang==='tr'?'📋 Bekleme Listesinde':'📋 On Waitlist';
+    joinBtn.disabled=true; joinBtn.style.opacity='0.7';
+    joinBtn.style.background='#6B7280';
+  } else if(isFull){
+    joinBtn.textContent=lang==='tr'?'📋 Bekleme Listesine Gir':'📋 Join Waitlist';
+    joinBtn.disabled=false; joinBtn.style.opacity='1';
+    joinBtn.style.background='linear-gradient(135deg,#6B7280,#9CA3AF)';
+  } else {
+    joinBtn.textContent=t('join');
+    joinBtn.disabled=false; joinBtn.style.opacity='1';
+    joinBtn.style.background='';
+  }
   document.getElementById('propose-btn').textContent=t('propose');
   document.getElementById('detail-participants-title').textContent=t('participants');
   document.getElementById('detail-equipment-title').textContent=t('equipment_info');
@@ -529,6 +592,31 @@ function renderDetail() {
   document.getElementById('detail-suggested-players').innerHTML=suggested.length
     ?suggested.map(p=>`<div class="participant-row" style="padding:8px 0"><div class="avatar">${p.initials}</div><div class="participant-info" style="flex:1"><div class="participant-name">${p.name}</div><div class="participant-level">⭐${p.rating} · ${p.distance} · ${t('level')[p.level]}</div></div><button class="btn btn-sm btn-outline" onclick="addFriend('${p.name}','${p.initials}')" style="font-size:11px">${lang==='tr'?'+ Arkadaş':'+ Friend'}</button></div>`).join('')
     :`<div style="color:var(--text-secondary);font-size:13px">${lang==='tr'?'Öneri bulunamadı':'No suggestions'}</div>`;
+
+  // Cost per person
+  const costEl=document.getElementById('detail-cost');
+  if(costEl){
+    const cpp=a.cost&&a.totalSlots?Math.ceil(a.cost/a.totalSlots):0;
+    costEl.style.display=cpp?'flex':'none';
+    if(cpp) costEl.innerHTML=`<div class="detail-info-icon">💰</div><div><div class="detail-info-label">${lang==='tr'?'Tahmini Kişi Başı Maliyet':'Est. Cost per Person'}</div><div class="detail-info-value">~${cpp}₺ <span style="font-size:12px;color:var(--text-secondary)">(${lang==='tr'?'saha ücreti':'venue fee'}: ${a.cost}₺ / ${a.totalSlots} ${lang==='tr'?'kişi':'people'})</span></div></div>`;
+  }
+
+  // Recurring badge
+  const recEl=document.getElementById('detail-recurring');
+  if(recEl){
+    recEl.style.display=a.recurring?'flex':'none';
+    if(a.recurring){const freq={weekly:lang==='tr'?'Haftalık':'Weekly',daily:lang==='tr'?'Her Gün':'Daily',biweekly:lang==='tr'?'2 Haftada Bir':'Biweekly'};recEl.innerHTML=`<div class="detail-info-icon">🔄</div><div><div class="detail-info-label">${lang==='tr'?'Tekrarlayan Aktivite':'Recurring Activity'}</div><div class="detail-info-value">${freq[a.recurringFreq]||a.recurringFreq}</div></div>`;}
+  }
+
+  // Action buttons (QR + Calendar)
+  const actionsEl=document.getElementById('detail-actions');
+  if(actionsEl) actionsEl.innerHTML=`
+    <button class="btn btn-outline" style="flex:1;font-size:13px;gap:6px" onclick="openQRModal(${a.id})">📱 QR Check-in</button>
+    <button class="btn btn-outline" style="flex:1;font-size:13px;gap:6px" onclick="addToCalendar(${a.id})">📅 ${lang==='tr'?'Takvime Ekle':'Add to Calendar'}</button>`;
+
+  // Weather
+  const weatherEl=document.getElementById('detail-weather');
+  if(weatherEl&&a.dateISO) loadWeather(a.coords.lat,a.coords.lng,a.dateISO);
 
   initDetailMap(a);
   loadDetailVenues(a.coords.lat,a.coords.lng,a.sport);
@@ -769,7 +857,10 @@ function renderVenueList(venues, districtName='') {
         </div>
         ${hoursDisplay}
         ${websiteLink||phoneLink?`<div class="venue-links">${websiteLink}${phoneLink}</div>`:''}
-        ${vLat?`<button class="btn btn-outline" style="font-size:12px;padding:7px 14px;margin-top:8px" onclick="showVenueOnMap(${vLat},${vLng},'${name.replace(/'/g,"\\'")}')">📍 Haritada Gör</button>`:''}
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          ${vLat?`<button class="btn btn-outline" style="font-size:12px;padding:7px 14px;flex:1" onclick="showVenueOnMap(${vLat},${vLng},'${name.replace(/'/g,"\\'")}')">📍 Haritada Gör</button>`:''}
+          <button class="btn btn-outline" style="font-size:12px;padding:7px 14px;flex:1" onclick="openVenueReviewModal('${name.replace(/'/g,"\\'")}')">⭐ ${lang==='tr'?'Yorum':'Review'}</button>
+        </div>
       </div>`;
   }).join('');
 }
@@ -922,6 +1013,26 @@ function renderCreate() {
       <div><div class="check-label">${e.label[lang]}</div><div class="check-sub">${e.sub[lang]}</div></div>
     </div>`).join('');
 
+  // Recurring
+  const recLabel=document.getElementById('recurring-label');
+  const recToggle=document.getElementById('recurring-toggle');
+  const recFreqWrap=document.getElementById('recurring-freq-wrap');
+  if(recLabel) recLabel.textContent=LANG.current==='tr'?'Tekrarlayan Aktivite':'Recurring Activity';
+  if(recToggle) recToggle.classList.toggle('on',state.recurringActivity);
+  if(recFreqWrap) recFreqWrap.style.display=state.recurringActivity?'flex':'none';
+
+  // Cost
+  const costLabel=document.getElementById('cost-label');
+  if(costLabel) costLabel.textContent=LANG.current==='tr'?'Saha / Tesis Ücreti (₺)':'Venue Cost (₺)';
+  const costInput=document.getElementById('venue-cost-input');
+  if(costInput){
+    costInput.value=state.venueCost||'';
+    costInput.placeholder=LANG.current==='tr'?'0 — ücretsiz ise boş bırakın':'0 — leave empty if free';
+    const cpp=state.venueCost&&state.createPlayersCount?Math.ceil(state.venueCost/state.createPlayersCount):0;
+    const costHint=document.getElementById('cost-hint');
+    if(costHint) costHint.textContent=cpp?`≈ ${cpp}₺ / kişi`:'';
+  }
+
   document.getElementById('publish-btn').textContent=t('publish');
   document.getElementById('create-notes').placeholder=t('notesPh');
   document.getElementById('create-pick-map-btn').textContent='📍 '+t('pickLocation');
@@ -947,6 +1058,25 @@ function renderProfile() {
   document.getElementById('profile-stats').innerHTML=u.stats.map(s=>`<div class="stat-item"><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div></div>`).join('');
   document.getElementById('profile-sports').innerHTML=u.sports.map(s=>`<div class="sport-level-row"><div class="sport-level-left">${s.icon} ${s.name}</div><span class="level-pill">${t('level')[s.level]}</span></div>`).join('');
   document.getElementById('profile-history').innerHTML=u.history.map(h=>`<div class="activity-history-item"><div class="history-icon">${h.icon}</div><div><div class="history-title">${h.title}</div><div class="history-date">${h.date}</div></div></div>`).join('');
+  // Streak widget
+  const streakEl=document.getElementById('profile-streak');
+  if(streakEl) streakEl.innerHTML=`
+    <div class="streak-header">
+      <div class="streak-fire">🔥</div>
+      <div>
+        <div class="streak-count">${STREAK.current} ${lang==='tr'?'Hafta':'Weeks'}</div>
+        <div class="streak-label">${lang==='tr'?'Aktif Seri':'Active Streak'}</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:13px;font-weight:700;color:var(--text-secondary)">En İyi: ${STREAK.best} ${lang==='tr'?'hafta':'wk'}</div>
+        <div style="font-size:12px;color:var(--text-secondary)">${lang==='tr'?'Bu hafta':'This week'}: ${STREAK.thisWeek} ${lang==='tr'?'aktivite':'activities'}</div>
+      </div>
+    </div>
+    <div class="streak-bars">
+      ${STREAK.weeks.map((w,i)=>{const h=Math.max(8,Math.min(40,w*10));const isLast=i===STREAK.weeks.length-1;return `<div class="streak-bar-wrap"><div class="streak-bar ${isLast?'current':''}" style="height:${h}px"></div><div class="streak-bar-label">${lang==='tr'?['H8','H7','H6','H5','H4','H3','H2','Bu'][i]:['W8','W7','W6','W5','W4','W3','W2','Now'][i]}</div></div>`;}).join('')}
+    </div>
+    <div style="font-size:12px;color:var(--text-secondary);text-align:center;margin-top:4px">${STREAK.totalActivities} ${lang==='tr'?'toplam aktivite':'total activities'}</div>`;
+
   document.getElementById('profile-topbar-title').textContent=t('profileTitle');
   document.getElementById('profile-sports-title').textContent=lang==='tr'?'Sporlarım':'My Sports';
   document.getElementById('profile-history-title').textContent=lang==='tr'?'Aktivite Geçmişi':'Activity History';
@@ -1151,7 +1281,17 @@ function setJoinCondition(c){state.joinCondition=c;renderCreate();}
 function toggleFriendsOnly(){state.friendsOnly=!state.friendsOnly;document.getElementById('friends-only-toggle').classList.toggle('on',state.friendsOnly);}
 function toggleDay(d){state.selectedDays.has(d)?state.selectedDays.delete(d):state.selectedDays.add(d);renderCreate();}
 function toggleEquipment(id){state.checkedEquipment.has(id)?state.checkedEquipment.delete(id):state.checkedEquipment.add(id);renderCreate();}
-function handleJoin(){showToast('🎉 '+t('joined'));}
+function handleJoin(){
+  const a=state.selectedActivity;
+  if(a&&a.slots===0){
+    state.waitlist[a.id]=true;
+    const pos=Object.keys(state.waitlist).length;
+    showToast(LANG.current==='tr'?`📋 Bekleme listesine eklendiniz (${pos}. sıra)`:`📋 Added to waitlist (position ${pos})`);
+    renderDetail();
+  } else {
+    showToast('🎉 '+t('joined'));
+  }
+}
 function handlePropose(){openProposeModal();}
 function handlePublish(){
   if(!state.selectedSport){showToast(LANG.current==='tr'?'⚠️ Lütfen bir spor seçin':'⚠️ Please select a sport');return;}
@@ -1183,6 +1323,168 @@ function toggleLang(){LANG.current=LANG.current==='tr'?'en':'tr';document.queryS
 
 // ─── Toast ─────────────────────────────────────────────────
 function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ─── Now Ready ────────────────────────────────────────────
+function toggleNowReady(){
+  state.nowReady=!state.nowReady;
+  document.getElementById('now-ready-toggle').classList.toggle('on',state.nowReady);
+  const section=document.getElementById('ready-players-section');
+  if(section) section.style.display=state.nowReady?'block':'none';
+  if(state.nowReady){renderReadyPlayers();showToast(LANG.current==='tr'?'🟢 Müsait modundasınız!':'🟢 You\'re now in ready mode!');}
+}
+
+function renderReadyPlayers(){
+  const lang=LANG.current;
+  const filter=state.activeFilter;
+  const players=filter==='all'?READY_PLAYERS:READY_PLAYERS.filter(p=>p.sport===filter);
+  const countEl=document.getElementById('ready-count');
+  if(countEl) countEl.textContent=`${players.length} ${lang==='tr'?'kişi':'players'}`;
+  const listEl=document.getElementById('ready-players-list');
+  if(!listEl) return;
+  listEl.innerHTML=players.map(p=>`
+    <div class="ready-player-card">
+      <div class="ready-dot"></div>
+      <div class="avatar">${p.initials}</div>
+      <div class="ready-info">
+        <div class="ready-name">${p.name} · ${t('sports')[p.sport]||p.sport}</div>
+        <div class="ready-meta">${t('level')[p.level]} · 📍${p.distance} · ⏱ ${p.readySince}</div>
+      </div>
+      <button class="btn btn-sm btn-primary" onclick="showToast('📨 '+(LANG.current===\'tr\'?\'Davet gönderildi!\':\'Invite sent!\'))" style="font-size:11px;padding:7px 12px">${lang==='tr'?'Davet':'Invite'}</button>
+    </div>`).join('');
+}
+
+// ─── GPS Filter ───────────────────────────────────────────
+function toggleGPSFilter(){
+  if(!state.gpsActive){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      state.gpsActive=true; state.userLat=pos.coords.latitude; state.userLng=pos.coords.longitude;
+      renderHome();
+      showToast(LANG.current==='tr'?`📍 ${state.gpsRadius}km çevresindeki ilanlar gösteriliyor`:`📍 Showing activities within ${state.gpsRadius}km`);
+    },()=>showToast(LANG.current==='tr'?'📍 Konum izni gerekiyor':'📍 Location permission required'));
+  } else {
+    state.gpsActive=false; state.userLat=null; state.userLng=null;
+    renderHome();
+  }
+}
+
+function setGPSRadius(km){
+  state.gpsRadius=km;
+  document.querySelectorAll('.gps-radius-btn').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.km)===km));
+  if(state.gpsActive) renderHome();
+}
+
+// ─── Weather ──────────────────────────────────────────────
+async function loadWeather(lat,lng,dateISO){
+  const el=document.getElementById('detail-weather'); if(!el) return;
+  try {
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weathercode,temperature_2m_max,precipitation_sum&timezone=auto&forecast_days=7`);
+    const data=await r.json();
+    const days=data.daily; const idx=days.time.indexOf(dateISO);
+    if(idx===-1){el.style.display='none';return;}
+    const code=days.weathercode[idx]; const temp=days.temperature_2m_max[idx]; const rain=days.precipitation_sum[idx];
+    const icon=weatherIcon(code); const desc=weatherDesc(code);
+    const isRainy=rain>2||[61,63,65,80,81,82,95,99].includes(code);
+    el.innerHTML=`<div class="weather-widget${isRainy?' rainy':''}"><span class="weather-icon-big">${icon}</span><div class="weather-info"><div class="weather-temp">${Math.round(temp)}°C · ${desc}</div>${isRainy?`<div class="weather-warn">⚠️ ${LANG.current==='tr'?'Yağmur bekleniyor — mekan seçimine dikkat!':'Rain expected — consider indoor venue!'}</div>`:''}</div></div>`;
+    el.style.display='block';
+  } catch { el.style.display='none'; }
+}
+
+function weatherIcon(c){if(c===0)return'☀️';if(c<=3)return'⛅';if(c<=48)return'🌫️';if(c<=57)return'🌦️';if(c<=67)return'🌧️';if(c<=77)return'❄️';if(c<=82)return'🌦️';return'⛈️';}
+function weatherDesc(c){const tr={0:'Güneşli',1:'Az Bulutlu',2:'Parçalı Bulutlu',3:'Bulutlu',45:'Sisli',51:'Hafif Yağmur',61:'Yağmurlu',63:'Kuvvetli Yağmur',65:'Çok Kuvvetli Yağmur',80:'Sağanak',81:'Kuvvetli Sağanak',95:'Fırtına',99:'Şiddetli Fırtına'};const en={0:'Sunny',1:'Mainly Clear',2:'Partly Cloudy',3:'Overcast',45:'Foggy',51:'Light Drizzle',61:'Rain',63:'Heavy Rain',65:'Very Heavy Rain',80:'Showers',81:'Heavy Showers',95:'Thunderstorm',99:'Heavy Thunderstorm'};return(LANG.current==='tr'?tr:en)[c]||(LANG.current==='tr'?'Hava Durumu':'Weather');}
+
+// ─── QR Check-in ──────────────────────────────────────────
+function openQRModal(activityId){
+  const lang=LANG.current;
+  const url=`https://social-sports.app/activity/${activityId}`;
+  const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=7C3AED&margin=10`;
+  const modal=document.getElementById('feedback-modal');
+  modal.innerHTML=`<div class="modal-backdrop" onclick="closeFeedbackModal()"></div><div class="modal-sheet"><div class="modal-handle"></div><div class="modal-title">QR Check-in</div><div style="text-align:center;padding:8px 0 16px"><img src="${qrUrl}" alt="QR" style="border-radius:16px;border:3px solid #F3F0FF;width:200px;height:200px"/><div style="font-size:13px;color:var(--text-secondary);margin-top:12px;line-height:1.5">${lang==='tr'?'Katılımcılar bu kodu okutarak katılımlarını onaylayabilir.':'Participants scan this code to confirm attendance.'}</div></div><button class="btn btn-primary" onclick="closeFeedbackModal()">${lang==='tr'?'Kapat':'Close'}</button></div>`;
+  modal.style.display='flex';
+  requestAnimationFrame(()=>modal.querySelector('.modal-sheet').classList.add('open'));
+}
+
+// ─── Add to Calendar ──────────────────────────────────────
+function addToCalendar(activityId){
+  const a=ACTIVITIES.find(x=>x.id===activityId); if(!a) return;
+  const lang=LANG.current;
+  const title=a.title[lang]; const loc=a.location[lang];
+  const date=(a.dateISO||'2026-05-15').replace(/-/g,'');
+  const tFrom=(a.timeFrom||'18:00').replace(':','');
+  const tTo=(a.timeTo||'20:00').replace(':','');
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Social Sports//TR',
+    'BEGIN:VEVENT',`SUMMARY:${title}`,`DTSTART:${date}T${tFrom}00`,`DTEND:${date}T${tTo}00`,
+    `LOCATION:${loc}`,`DESCRIPTION:Social Sports - ${loc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a'); link.href=url; link.download=`social-sports-${activityId}.ics`; link.click();
+  URL.revokeObjectURL(url);
+  showToast('📅 '+(lang==='tr'?'Takvime eklendi!':'Added to calendar!'));
+}
+
+// ─── Post-activity Rating ─────────────────────────────────
+let _currentRating=0;
+function openRatingModal(name){
+  const lang=LANG.current;
+  const modal=document.getElementById('feedback-modal');
+  const tags=lang==='tr'?['Zamanında geldi','Seviye doğruydu','Tekrar oynarım','Arkadaş canlısı','Ekipman paylaştı']:['On time','Right level','Would play again','Friendly','Shared equipment'];
+  modal.innerHTML=`<div class="modal-backdrop" onclick="closeFeedbackModal()"></div><div class="modal-sheet"><div class="modal-handle"></div><div class="modal-title">${lang==='tr'?`${name}'ı Değerlendir`:`Rate ${name}`}</div><div class="star-row" id="star-rating">${[1,2,3,4,5].map(i=>`<span class="star" onclick="setRating(${i})">★</span>`).join('')}</div><div style="font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:14px" id="rating-label">${lang==='tr'?'Puan seçin':'Select rating'}</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">${tags.map(tag=>`<button class="rating-tag" onclick="this.classList.toggle('selected')">${tag}</button>`).join('')}</div><button class="btn btn-primary" onclick="submitRating()">${lang==='tr'?'Değerlendirmeyi Gönder':'Submit Rating'}</button></div>`;
+  modal.style.display='flex';
+  requestAnimationFrame(()=>modal.querySelector('.modal-sheet').classList.add('open'));
+}
+
+function setRating(n){
+  _currentRating=n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('active',i<n));
+  const labels=LANG.current==='tr'?['','Kötü','İdare eder','İyi','Çok İyi','Mükemmel']:['','Poor','Fair','Good','Very Good','Excellent'];
+  const el=document.getElementById('rating-label'); if(el) el.textContent=labels[n];
+}
+
+function submitRating(){
+  if(!_currentRating){showToast(LANG.current==='tr'?'⭐ Lütfen puan seçin':'⭐ Please select a rating');return;}
+  _currentRating=0; closeFeedbackModal();
+  setTimeout(()=>showToast(LANG.current==='tr'?'⭐ Değerlendirmeniz gönderildi!':'⭐ Rating submitted!'),350);
+}
+
+// ─── Venue Reviews ────────────────────────────────────────
+function openVenueReviewModal(venueName){
+  const lang=LANG.current;
+  const modal=document.getElementById('feedback-modal');
+  const existing=VENUE_REVIEWS[venueName]||[];
+  const tags=lang==='tr'?['Temiz','Bakımlı','Uygun Fiyat','İyi Personel','Kolay Ulaşım','Kalabalık']:['Clean','Well-maintained','Good Value','Good Staff','Easy Access','Crowded'];
+  modal.innerHTML=`<div class="modal-backdrop" onclick="closeFeedbackModal()"></div><div class="modal-sheet"><div class="modal-handle"></div><div class="modal-title" style="font-size:16px">⭐ ${venueName}</div>${existing.length?`<div style="margin-bottom:12px">${existing.slice(0,2).map(r=>`<div class="venue-review-item"><div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div><div class="review-text">${r.text}</div></div>`).join('')}</div>`:''}<div class="modal-section-label">${lang==='tr'?'Yorum Yaz':'Write a Review'}</div><div class="star-row" id="star-rating" style="margin:8px 0">${[1,2,3,4,5].map(i=>`<span class="star" onclick="setRating(${i})">★</span>`).join('')}</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">${tags.map(tag=>`<button class="rating-tag" onclick="this.classList.toggle('selected')">${tag}</button>`).join('')}</div><textarea class="input-field" id="venue-review-text" rows="2" style="resize:none;margin-bottom:12px" placeholder="${lang==='tr'?'Yorumunuz...':'Your review...'}"></textarea><button class="btn btn-primary" onclick="submitVenueReview('${venueName.replace(/'/g,"\\'")} ')">${lang==='tr'?'Yorumu Gönder':'Submit'}</button></div>`;
+  modal.style.display='flex';
+  requestAnimationFrame(()=>modal.querySelector('.modal-sheet').classList.add('open'));
+}
+
+function submitVenueReview(venueName){
+  if(!_currentRating){showToast(LANG.current==='tr'?'⭐ Puan seçin':'⭐ Select a rating');return;}
+  const text=(document.getElementById('venue-review-text')?.value||'').trim();
+  if(!VENUE_REVIEWS[venueName]) VENUE_REVIEWS[venueName]=[];
+  VENUE_REVIEWS[venueName].push({rating:_currentRating,text,date:new Date().toLocaleDateString('tr-TR')});
+  _currentRating=0; closeFeedbackModal();
+  setTimeout(()=>showToast(LANG.current==='tr'?'⭐ Yorumunuz eklendi!':'⭐ Review added!'),350);
+}
+
+// ─── Create form helpers ───────────────────────────────────
+function setVenueCost(val){
+  state.venueCost=parseInt(val)||0;
+  const players=parseInt(document.getElementById('create-players')?.value)||2;
+  state.createPlayersCount=players;
+  const cpp=state.venueCost&&players?Math.ceil(state.venueCost/players):0;
+  const hint=document.getElementById('cost-hint');
+  if(hint) hint.textContent=cpp?`≈ ${cpp}₺ / ${LANG.current==='tr'?'kişi':'person'}`:'';
+}
+
+function toggleRecurring(){
+  state.recurringActivity=!state.recurringActivity;
+  document.getElementById('recurring-toggle').classList.toggle('on',state.recurringActivity);
+  document.getElementById('recurring-freq-wrap').style.display=state.recurringActivity?'flex':'none';
+}
+
+function setRecurringFreq(freq){
+  state.recurringFreq=freq;
+  document.querySelectorAll('.freq-btn').forEach(b=>b.classList.toggle('selected',b.dataset.freq===freq));
+}
 
 // ─── Init ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{ navigate('splash'); });

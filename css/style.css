@@ -1918,6 +1918,215 @@ body {
   border-radius: var(--radius-pill);
 }
 
+/* ─── Home tools bar (now-ready + GPS) ────────────────────── */
+.home-tools-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px 10px;
+  gap: 12px;
+}
+
+.now-ready-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.now-ready-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.gps-filter-btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.gps-filter-btn.active {
+  background: var(--gradient);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(124,58,237,0.3);
+}
+
+/* ─── Ready player cards ───────────────────────────────────── */
+.ready-player-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--white);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: var(--card-shadow);
+  border-left: 3px solid #10B981;
+}
+
+.ready-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
+}
+
+.ready-info { flex: 1; }
+.ready-name { font-size: 13px; font-weight: 700; }
+.ready-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+/* ─── Activity card badges (cost, recurring) ───────────────── */
+.recurring-badge {
+  font-size: 11px; font-weight: 600;
+  color: #0369A1;
+  background: #F0F9FF;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.cost-badge {
+  font-size: 11px; font-weight: 600;
+  color: #B45309;
+  background: #FFFBEB;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+/* ─── Weather widget ───────────────────────────────────────── */
+.weather-widget {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+  border-radius: 14px;
+  padding: 12px 16px;
+  border: 1px solid #BFDBFE;
+}
+
+.weather-widget.rainy {
+  background: linear-gradient(135deg, #FFF7ED, #FEE2E2);
+  border-color: #FECACA;
+}
+
+.weather-icon-big { font-size: 32px; }
+
+.weather-info { flex: 1; }
+.weather-temp { font-size: 14px; font-weight: 700; }
+.weather-warn { font-size: 12px; color: #DC2626; margin-top: 3px; font-weight: 600; }
+
+/* ─── Star rating ──────────────────────────────────────────── */
+.star-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.star {
+  font-size: 32px;
+  color: var(--border);
+  cursor: pointer;
+  transition: color 0.15s, transform 0.15s;
+}
+.star.active { color: #F59E0B; }
+.star:hover { transform: scale(1.2); }
+
+.rating-tag {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+.rating-tag.selected {
+  background: var(--gradient);
+  border-color: transparent;
+  color: #fff;
+}
+
+/* ─── Venue review ─────────────────────────────────────────── */
+.venue-review-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.venue-review-item:last-child { border-bottom: none; }
+.review-stars { color: #F59E0B; font-size: 14px; margin-bottom: 3px; }
+.review-text { font-size: 13px; color: var(--text-secondary); }
+
+/* ─── Streak widget ────────────────────────────────────────── */
+.streak-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.streak-fire { font-size: 36px; }
+.streak-count { font-size: 22px; font-weight: 800; color: var(--text); }
+.streak-label { font-size: 12px; color: var(--text-secondary); }
+
+.streak-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 52px;
+}
+
+.streak-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.streak-bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: #E5E7EB;
+  transition: height 0.3s;
+}
+.streak-bar.current { background: var(--gradient); }
+
+.streak-bar-label {
+  font-size: 9px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ─── Recurring freq buttons ───────────────────────────────── */
+.freq-btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+.freq-btn.selected {
+  background: var(--gradient);
+  border-color: transparent;
+  color: #fff;
+}
+
 /* ─── Friends list ─────────────────────────────────────────── */
 .friend-row {
   display: flex;
